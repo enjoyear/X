@@ -1,0 +1,8 @@
+mvn clean install
+
+if at root directory
+    mvn exec:java -pl core
+    mvn exec:java -pl core -Dexec.mainClass=chen.guo.X.Main
+if at core directory
+    mvn exec:java
+    mvn exec:java -Dexec.mainClass=chen.guo.X.Main
