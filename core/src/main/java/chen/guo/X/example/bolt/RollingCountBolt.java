@@ -42,7 +42,7 @@ public class RollingCountBolt extends BaseRichBolt {
    *
    * This implementation CANNOT count correctly if emitFrequencyInSeconds
    * is not a divisor of windowLengthInSeconds, in which case the actual window
-   * length will always be 
+   * length will always be
    * (int)(windowLengthInSeconds/emitFrequencyInSeconds) * emitFrequencyInSeconds.
    *
    * @param windowLengthInSeconds  indicates the length of the sliding window
