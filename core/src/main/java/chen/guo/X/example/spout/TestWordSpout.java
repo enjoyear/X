@@ -15,12 +15,13 @@ import java.util.Random;
 
 public class TestWordSpout extends BaseRichSpout {
 
+  private static String CLASS_NAME = TestWordSpout.class.getName();
   private static Logger logger = LoggerFactory.getLogger(TestWordSpout.class);
   private SpoutOutputCollector _collector;
 
   @Override
   public void open(Map map, TopologyContext topologyContext, SpoutOutputCollector spoutOutputCollector) {
-    logger.info("Opening SimulatedWordSpout...");
+    logger.info(String.format("Opening %s...", CLASS_NAME));
     _collector = spoutOutputCollector;
   }
 
@@ -35,7 +36,7 @@ public class TestWordSpout extends BaseRichSpout {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-    outputFieldsDeclarer.declare(new Fields("word"));
+    outputFieldsDeclarer.declare(new Fields("spout_field_word"));
   }
 }
 
