@@ -36,7 +36,7 @@ public class TestWordSpout extends BaseRichSpout {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-    outputFieldsDeclarer.declare(new Fields("spout_field_word"));
+    outputFieldsDeclarer.declare(new Fields("word"));
   }
 }
 
