@@ -75,7 +75,7 @@ public class RankableObjectWithFields implements Rankable, Serializable {
     return result;
   }
 
-  public String toString() {
+  public String toString()  {
     StringBuffer buf = new StringBuffer();
     buf.append("[");
     buf.append(obj);

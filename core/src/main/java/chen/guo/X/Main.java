@@ -1,7 +1,6 @@
 package chen.guo.X;
 
-import chen.guo.X.example.topology.ExclamationTopology;
-import chen.guo.X.example.topology.WordRollingCountTopology;
+import chen.guo.X.example.topology.WordTopRollingCountTopology;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.utils.Utils;
@@ -16,7 +15,7 @@ public class Main {
     conf.setDebug(true);
 
     LocalCluster cluster = new LocalCluster();
-    cluster.submitTopology("TopologyName", conf, WordRollingCountTopology.build());
+    cluster.submitTopology("TopologyName", conf, WordTopRollingCountTopology.build());
     Utils.sleep(10000);
     cluster.killTopology("TopologyName");
     cluster.shutdown();
