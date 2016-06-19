@@ -1,4 +1,4 @@
-package chen.guo.X.example.spout;
+package chen.guo.X.storm.example.spout;
 
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;

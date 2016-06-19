@@ -1,7 +1,7 @@
-package chen.guo.X.example.bolt;
+package chen.guo.X.storm.example.bolt;
 
-import chen.guo.X.example.tools.Rankable;
-import chen.guo.X.example.tools.RankableObjectWithFields;
+import chen.guo.X.storm.example.tools.Rankable;
+import chen.guo.X.storm.example.tools.RankableObjectWithFields;
 import org.apache.log4j.Logger;
 
 import org.apache.storm.tuple.Tuple;

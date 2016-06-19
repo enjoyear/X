@@ -1,7 +1,7 @@
-package chen.guo.X.example.topology;
+package chen.guo.X.storm.example.topology;
 
-import chen.guo.X.example.bolt.RollingCountBolt;
-import chen.guo.X.example.spout.TestWordSpout;
+import chen.guo.X.storm.example.bolt.RollingCountBolt;
+import chen.guo.X.storm.example.spout.TestWordSpout;
 import org.apache.storm.generated.StormTopology;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;

@@ -1,6 +1,6 @@
-package chen.guo.X.example.bolt;
+package chen.guo.X.storm.example.bolt;
 
-import chen.guo.X.example.tools.Rankings;
+import chen.guo.X.storm.example.tools.Rankings;
 import org.apache.log4j.Logger;
 
 import org.apache.storm.tuple.Tuple;

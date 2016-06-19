@@ -1,7 +1,7 @@
-package chen.guo.X.example.bolt;
+package chen.guo.X.storm.example.bolt;
 
-import chen.guo.X.example.tools.NthLastModifiedTimeTracker;
-import chen.guo.X.example.tools.SlidingWindowCounter;
+import chen.guo.X.storm.example.tools.NthLastModifiedTimeTracker;
+import chen.guo.X.storm.example.tools.SlidingWindowCounter;
 import org.apache.log4j.Logger;
 import org.apache.storm.Config;
 import org.apache.storm.task.OutputCollector;

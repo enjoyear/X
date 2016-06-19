@@ -1,4 +1,4 @@
-package chen.guo.X.example.tools;
+package chen.guo.X.storm.example.tools;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

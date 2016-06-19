@@ -1,4 +1,4 @@
-package chen.guo.X.example.tools;
+package chen.guo.X.storm.example.tools;
 
 import java.io.Serializable;
 import java.util.Map;

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package chen.guo.X.example.tools;
+package chen.guo.X.storm.example.tools;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.storm.utils.Time;

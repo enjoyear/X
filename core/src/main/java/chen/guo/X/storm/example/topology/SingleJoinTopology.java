@@ -1,6 +1,6 @@
-package chen.guo.X.example.topology;
+package chen.guo.X.storm.example.topology;
 
-import chen.guo.X.example.bolt.SingleJoinBolt;
+import chen.guo.X.storm.example.bolt.SingleJoinBolt;
 import org.apache.storm.generated.StormTopology;
 import org.apache.storm.testing.FeederSpout;
 import org.apache.storm.topology.TopologyBuilder;

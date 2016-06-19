@@ -1,6 +1,6 @@
-package chen.guo.X;
+package chen.guo.X.storm;
 
-import chen.guo.X.example.topology.SingleJoinTopology;
+import chen.guo.X.storm.example.topology.SingleJoinTopology;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.utils.Utils;

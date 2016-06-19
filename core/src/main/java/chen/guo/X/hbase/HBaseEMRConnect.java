@@ -1,4 +1,4 @@
-package chen.guo.X;
+package chen.guo.X.hbase;
 
 
 import com.google.protobuf.ServiceException;
@@ -12,7 +12,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
-public class HBaseConnect {
+public class HBaseEMRConnect {
 //https://forums.aws.amazon.com/thread.jspa?messageID=386668
 
   public static void main(String[] args) throws IOException, ServiceException {

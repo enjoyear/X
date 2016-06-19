@@ -1,4 +1,4 @@
-package chen.guo.X.example.tools;
+package chen.guo.X.storm.example.tools;
 
 public interface Rankable extends Comparable<Rankable> {
 

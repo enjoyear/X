@@ -1,4 +1,4 @@
-package chen.guo.X.example.bolt;
+package chen.guo.X.storm.example.bolt;
 
 import org.apache.log4j.Logger;
 import org.apache.storm.Config;
