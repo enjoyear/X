@@ -4,9 +4,17 @@ package chen.guo.crawler;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+/**
+ * Performance Comparison:
+ * <p>
+ * Preparation:
+ * 1. Change Collections.synchronizedSet to Collections.synchronizedList
+ * 2. visited should always return false.
+ * <p>
+ * <p>
+ * Java 7's ForkJoinPool implementation is 1.5x times faster than the Java 6's ExecutorService.
+ */
 public abstract class Crawler implements LinkHandler {
 
   private final Collection<String> visitedLinks = Collections.synchronizedSet(new HashSet<>());
