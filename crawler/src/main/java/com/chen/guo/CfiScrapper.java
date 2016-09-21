@@ -1,4 +1,4 @@
-package chen.guo.crawler;
+package com.chen.guo;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
