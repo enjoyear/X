@@ -1,4 +1,4 @@
-package com.chen.guo.jersey;
+package com.chen.guo.app.jersey;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ResourceHandler;

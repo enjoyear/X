@@ -1,16 +1,17 @@
-package com.chen.guo.jersey.rest;
+package com.chen.guo.app.grizzly.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("home")
-public class Home {
+@Path("myresource")
+public class MyResource {
+
   @GET
-  @Path("hello")
   @Produces(MediaType.TEXT_PLAIN)
-  public String helloWorld() {
-    return "Hello, world!";
+  public String getIt() {
+    return "Got it!";
   }
 }
+

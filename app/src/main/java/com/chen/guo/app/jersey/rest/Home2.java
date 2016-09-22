@@ -1,6 +1,5 @@
-package com.chen.guo.jersey.rest;
+package com.chen.guo.app.jersey.rest;
 
-import com.chen.guo.jersey.service.DownloadService;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.Consumes;

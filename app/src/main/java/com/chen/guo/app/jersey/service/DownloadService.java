@@ -1,4 +1,4 @@
-package com.chen.guo.jersey.service;
+package com.chen.guo.app.jersey.service;
 
 
 import java.io.IOException;
