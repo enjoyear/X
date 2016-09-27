@@ -1,4 +1,4 @@
-name := """playapp"""
+name := "play-app"
 
 version := "1.0-SNAPSHOT"
 

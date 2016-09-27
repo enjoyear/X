@@ -1,5 +1,6 @@
 package com.chen.guo.crawler.source.cfi;
 
+import com.chen.guo.crawler.util.WebPageUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +10,7 @@ import java.io.IOException;
 
 public class CfiScrapper {
   public static void main(String[] args) throws IOException {
-    Document doc = Jsoup.connect("http://quote.cfi.cn/cwfxzb/11576/300182.html").get();
+    Document doc = WebPageUtil.INSTANCE.getPageContent("http://quote.cfi.cn/cwfxzb/11576/300182.html");
     Element content = doc.getElementById("content");
     Element table = content.getElementsByTag("table").first().getElementsByTag("tbody").first();
     Element yearMonthTr = table.getElementsByTag("tr").get(1);

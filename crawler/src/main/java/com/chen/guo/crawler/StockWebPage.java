@@ -1,11 +1,11 @@
 package com.chen.guo.crawler;
 
-public class StockPage {
+public class StockWebPage {
   private final String name;
   private final String code;
   private final String url;
 
-  public StockPage(String name, String code, String url) {
+  public StockWebPage(String name, String code, String url) {
 
     this.name = name;
     this.code = code;
@@ -26,7 +26,7 @@ public class StockPage {
 
   @Override
   public String toString() {
-    return "StockPage{" +
+    return "StockWebPage{" +
         "name='" + name + '\'' +
         ", code='" + code + '\'' +
         ", url='" + url + '\'' +
