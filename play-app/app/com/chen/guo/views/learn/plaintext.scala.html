@@ -1,5 +1,6 @@
 @import _root_.com.chen.guo.models.Customer
 @import _root_.com.chen.guo.models.Order
+@import _root_.com.chen.guo.views.html.learn._
 
 @(customer: Customer, orders: List[Order])(sidebar: Html)(content: Html)
 
@@ -18,5 +19,21 @@
         </ul>
         <section class="sidebar">@sidebar</section>
         <section class="content">@content</section>
+
+        @notice("error") { color =>
+            Oops, something is <span style="color:@color">wrong</span>
+        }
+
+        @notice("warning") { color =>
+            Oops, something is <span style="color:@color">wrong</span>
+        }
+
+        @notice("success") { color =>
+            @{
+                val content: String = s"""Oops, something is <span style="color:${color}">wrong</span>"""
+                Html(content)
+            }
+        }
+
     </body>
 </html>
