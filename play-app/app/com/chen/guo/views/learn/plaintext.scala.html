@@ -1,12 +1,22 @@
 @import _root_.com.chen.guo.models.Customer
 @import _root_.com.chen.guo.models.Order
 
-@(customer: Customer, orders: List[Order])
+@(customer: Customer, orders: List[Order])(sidebar: Html)(content: Html)
 
-<h1>Welcome @customer.name!</h1>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Template Example</title>
+    </head>
+    <body>
+        <h1>Welcome @customer.name!</h1>
 
-<ul>
-@for(order <- orders) {
-    <li>@order.title</li>
-}
-</ul>
+        <ul>
+        @for(order <- orders) {
+            <li>@order.title</li>
+        }
+        </ul>
+        <section class="sidebar">@sidebar</section>
+        <section class="content">@content</section>
+    </body>
+</html>
