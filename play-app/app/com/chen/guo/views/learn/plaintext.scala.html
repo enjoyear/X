@@ -1,5 +1,5 @@
-@import _root_.com.chen.guo.models.Customer
-@import _root_.com.chen.guo.models.Order
+@import _root_.com.chen.guo.models.learn.Customer
+@import _root_.com.chen.guo.models.learn.Order
 @import _root_.com.chen.guo.views.html.learn._
 
 @(customer: Customer, orders: List[Order])(sidebar: Html)(content: Html)
@@ -8,6 +8,7 @@
 <html>
     <head>
         <title>Template Example</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
     </head>
     <body>
         <h1>Welcome @customer.name!</h1>
