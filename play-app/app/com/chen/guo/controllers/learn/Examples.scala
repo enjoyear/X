@@ -11,33 +11,33 @@ import play.twirl.api.Html
 @Singleton
 class Examples @Inject() extends Controller {
 
-//  val contactForm: Form[Contact] = Form(
-//    // Defines a mapping that will handle Contact values
-//    mapping(
-//      "firstname" -> nonEmptyText,
-//      "lastname" -> nonEmptyText,
-//      "company" -> optional(text),
-//
-//      // Defines a repeated mapping
-//      "informations" -> seq(
-//        mapping(
-//          "label" -> nonEmptyText,
-//          "email" -> optional(email),
-//          "phones" -> list(
-//            text verifying pattern("""[0-9.+]+""".r, error = "A valid phone number is required")
-//          )
-//        )(ContactInformation.apply)(ContactInformation.unapply)
-//      )
-//    )(Contact.apply)(Contact.unapply)
-//  )
+  //  val contactForm: Form[Contact] = Form(
+  //    // Defines a mapping that will handle Contact values
+  //    mapping(
+  //      "firstname" -> nonEmptyText,
+  //      "lastname" -> nonEmptyText,
+  //      "company" -> optional(text),
+  //
+  //      // Defines a repeated mapping
+  //      "informations" -> seq(
+  //        mapping(
+  //          "label" -> nonEmptyText,
+  //          "email" -> optional(email),
+  //          "phones" -> list(
+  //            text verifying pattern("""[0-9.+]+""".r, error = "A valid phone number is required")
+  //          )
+  //        )(ContactInformation.apply)(ContactInformation.unapply)
+  //      )
+  //    )(Contact.apply)(Contact.unapply)
+  //  )
 
-  def showCustomerOrders = Action {
+  def showCustomerOrders(customer: String) = Action {
     val html: Html = Html("<h1>Sidebar</h1>")
-    Ok(plaintext(Customer("Chen"), List(Order("Ord-1"), Order("Ord-2")))
+    Ok(plaintext(Customer(customer), List(Order("Ord-1"), Order("Ord-2")))
     (html)(Html(foo().body)))
   }
 
-//  def editContact = Action {
+  //  def editContact = Action {
   //    val existingContact = Contact(
   //      "Fake", "Contact", Some("Fake company"), informations = List(
   //        ContactInformation(
