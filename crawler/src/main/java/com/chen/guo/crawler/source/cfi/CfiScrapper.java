@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class CfiScrapper {
   public static void main(String[] args) throws IOException {
-    Document doc = WebPageUtil.INSTANCE.getPageContent("http://quote.cfi.cn/cwfxzb/11576/300182.html");
+    Document doc = WebPageUtil.getPageContent("http://quote.cfi.cn/cwfxzb/11576/300182.html");
     Element content = doc.getElementById("content");
     Element table = content.getElementsByTag("table").first().getElementsByTag("tbody").first();
     Element yearMonthTr = table.getElementsByTag("tr").get(1);

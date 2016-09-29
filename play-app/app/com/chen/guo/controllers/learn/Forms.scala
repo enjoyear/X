@@ -3,11 +3,11 @@ package com.chen.guo.controllers.learn
 import javax.inject.{Inject, Singleton}
 
 import com.chen.guo.models.learn.UserData
+import com.chen.guo.views.html.learn._
 import play.api.data.Forms._
 import play.api.data._
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import com.chen.guo.views.html.learn.user
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 
 @Singleton
 class Forms @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
@@ -31,9 +31,8 @@ class Forms @Inject()(val messagesApi: MessagesApi) extends Controller with I18n
       userData => {
         /* binding success, you get the actual value. */
         val newUser = UserData(userData.name, userData.age)
-        Redirect(routes.Examples.showCustomerOrders(newUser.toString))
+        Redirect(routes.Examples.showCustomerOrders(newUser.name))
       }
     )
-    Ok("1")
   }
 }

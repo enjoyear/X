@@ -7,22 +7,20 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
-public enum WebPageUtil {
-  INSTANCE;
+public class WebPageUtil {
+  private static final int CFI_CONNECTION_DEFAULT_TIME_OUT = 5000;
 
-  private static final int CFI_CONNECTION_DEFAULT_TIME_OUT = 2000;
-
-  public Document getPageContent(String url) throws IOException {
+  public static Document getPageContent(String url) throws IOException {
     return getPageContent(url, CFI_CONNECTION_DEFAULT_TIME_OUT);
   }
 
-  public Document getPageContent(String url, int connectionTimeout) throws IOException {
+  public static Document getPageContent(String url, int connectionTimeout) throws IOException {
     Connection connect = Jsoup.connect(url);
     connect.timeout(connectionTimeout);
     return connect.get();
   }
 
-  public String getHyperlink(Element element) {
+  public static String getHyperlink(Element element) {
     return element.getElementsByTag("a").get(0).absUrl("href");
   }
 }
