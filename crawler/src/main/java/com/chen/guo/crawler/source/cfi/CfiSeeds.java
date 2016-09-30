@@ -12,27 +12,31 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
 class CfiScrapingTask extends RecursiveAction {
   private static final Logger logger = Logger.getLogger(CfiScrapingTask.class);
+  private ConcurrentLinkedQueue<StockWebPage> failedPages;
   private final List<StockWebPage> pages;
   private final int low;
   private final int high;
-  private static int TASK_COUNT_PER_THREAD = 1;
+  private static int TASK_COUNT_PER_THREAD = 2; //TASK_COUNT_PER_THREAD >= 1
 
   /**
    * @param pages all tasks to do
    * @param low   inclusive low end
    * @param high  exclusive high end
    */
-  CfiScrapingTask(List<StockWebPage> pages, int low, int high) {
+  CfiScrapingTask(List<StockWebPage> pages, int low, int high, ConcurrentLinkedQueue<StockWebPage> failedPages) {
     this.pages = pages;
     this.low = low;
     this.high = high;
+    this.failedPages = failedPages;
   }
 
   @Override
@@ -40,36 +44,51 @@ class CfiScrapingTask extends RecursiveAction {
     if (high - low <= TASK_COUNT_PER_THREAD) {
       for (int i = low; i < high; ++i) {
         StockWebPage page = pages.get(i);
+        String rootUrl = page.getUrl();
         try {
-          Element pageFoundamentalIndicators = WebPageUtil.getPageContent(page.getUrl())
+          Element pageFoundamentalIndicators = WebPageUtil.getPageContent(rootUrl)
               .getElementById("nodea1");
           Element nonbreakableFI = pageFoundamentalIndicators.getElementsByTag("nobr").first();
           if (!"财务分析指标".equals(nonbreakableFI.text()))
-            throw new UnexpectedException("Didn't get the correct 财务分析指标 page for " + page.getUrl());
+            throw new UnexpectedException("Didn't get the correct 财务分析指标 page for " + rootUrl);
           System.out.println(WebPageUtil.getHyperlink(nonbreakableFI));
         } catch (IOException e) {
-          ExceptionUtils.logExceptionShort(logger, e, "Current URL: " + page.getUrl());
+          failedPages.add(page);
+          ExceptionUtils.logExceptionShort(logger, e, "Current URL: " + rootUrl);
         }
       }
     } else {
       int mid = (low + high) >>> 1;
-      invokeAll(new CfiScrapingTask(pages, low, mid), new CfiScrapingTask(pages, mid, high));
+      invokeAll(new CfiScrapingTask(pages, low, mid, failedPages), new CfiScrapingTask(pages, mid, high, failedPages));
     }
   }
 }
 
 public class CfiSeeds {
   private static final Logger logger = Logger.getLogger(CfiSeeds.class);
-  private static final Integer MAX_THREAD_COUNT = 8;
+  private static final Integer MAX_THREAD_COUNT = 8; //Should be configured to use the max count of cores of the machine
 
   public static void main(String[] args) {
 
     try {
-      List<StockWebPage> quoteBaseUrls = getBasePages();
+      List<StockWebPage> basePages = getBasePages();
+      logger.info("Total number of quote base urls: " + basePages.size());
       long startTime = System.currentTimeMillis();
       ForkJoinPool pool = new ForkJoinPool(MAX_THREAD_COUNT);
-      pool.invoke(new CfiScrapingTask(Collections.unmodifiableList(quoteBaseUrls), 0, quoteBaseUrls.size()));
-      System.out.println("That took " + (System.currentTimeMillis() - startTime) + " milliseconds");
+
+      ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
+      while (!basePages.isEmpty()) {
+        pool.invoke(new CfiScrapingTask(Collections.unmodifiableList(basePages), 0, basePages.size(), failedPages));
+        StockWebPage[] nextRound = (StockWebPage[]) failedPages.toArray();
+        basePages = Arrays.asList(nextRound);
+        failedPages.clear();
+        if (!basePages.isEmpty()) {
+          logger.info("Number of pages for next round is: " + basePages.size());
+          logger.info("The pages are as follows: ");
+          basePages.forEach(page -> logger.info(page.toString()));
+        }
+      }
+      logger.info("Whole process took " + (System.currentTimeMillis() - startTime) / 1000 + " seconds to finish");
     } catch (IOException e) {
       ExceptionUtils.logExceptionLong(logger, e);
     }
