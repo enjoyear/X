@@ -1,4 +1,4 @@
-package com.chen.guo.crawler;
+package com.chen.guo.crawler.model;
 
 public class StockWebPage {
   private final String name;

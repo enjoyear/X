@@ -1,7 +1,7 @@
 package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.common.Exception.ExceptionUtils;
-import com.chen.guo.crawler.StockWebPage;
+import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.util.WebPageUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
