@@ -8,13 +8,26 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 
 public class WebPageUtil {
-  private static final int CFI_CONNECTION_DEFAULT_TIME_OUT = 5000;
+  private final int connectionTimeout;
+  private static WebPageUtil INSTANCE_DEFAULT = null;
 
-  public static Document getPageContent(String url) throws IOException {
-    return getPageContent(url, CFI_CONNECTION_DEFAULT_TIME_OUT);
+  static {
+    INSTANCE_DEFAULT = new WebPageUtil();
   }
 
-  public static Document getPageContent(String url, int connectionTimeout) throws IOException {
+  public static WebPageUtil getInstance() {
+    return INSTANCE_DEFAULT;
+  }
+
+  private WebPageUtil() {
+    this(5);  //default timeout for internet connection is 5 second
+  }
+
+  public WebPageUtil(Integer internetTimeoutSecond) {
+    this.connectionTimeout = internetTimeoutSecond * 1000;
+  }
+
+  public Document getPageContent(String url) throws IOException {
     Connection connect = Jsoup.connect(url);
     connect.timeout(connectionTimeout);
     return connect.get();
