@@ -1,40 +1,35 @@
 @import _root_.com.chen.guo.models.learn.Customer
 @import _root_.com.chen.guo.models.learn.Order
 @import _root_.com.chen.guo.views.html.learn._
+@import _root_.com.chen.guo.views.html.main
 
 @(customer: Customer, orders: List[Order])(sidebar: Html)(content: Html)
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Template Example</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-    </head>
-    <body>
-        <h1>Welcome @customer.name!</h1>
+@main("plaintext") {
 
-        <ul>
-        @for(order <- orders) {
-            <li>@order.title</li>
+    <h1>Welcome @customer.name!</h1>
+
+    <ul>
+    @for(order <- orders) {
+        <li>@order.title</li>
+    }
+    </ul>
+    <section class="sidebar">@sidebar</section>
+    <section class="content">@content</section>
+
+    @notice("error") { color =>
+    Oops, something is <span style="color:@color">wrong</span>
+    }
+
+    @notice("warning") { color =>
+    Oops, something is <span style="color:@color">wrong</span>
+    }
+
+    @notice("success") { color =>
+        @{
+            val content: String = s"""Oops, something is <span style="color:${color}">wrong</span>"""
+            Html(content)
         }
-        </ul>
-        <section class="sidebar">@sidebar</section>
-        <section class="content">@content</section>
+    }
 
-        @notice("error") { color =>
-            Oops, something is <span style="color:@color">wrong</span>
-        }
-
-        @notice("warning") { color =>
-            Oops, something is <span style="color:@color">wrong</span>
-        }
-
-        @notice("success") { color =>
-            @{
-                val content: String = s"""Oops, something is <span style="color:${color}">wrong</span>"""
-                Html(content)
-            }
-        }
-
-    </body>
-</html>
+}

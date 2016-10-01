@@ -1,10 +1,13 @@
 @import _root_.com.chen.guo.models.learn.UserData
+@import _root_.com.chen.guo.views.html.main
 @import helper._
 
 @(userForm: Form[UserData])(implicit messages: Messages)
 
-@form(com.chen.guo.controllers.learn.routes.Forms.formPost) {
-    @inputText(userForm("name"))
-    @inputText(userForm("age"))
-    <input type="submit" value="Submit!!">
+@main("user") {
+    @form(com.chen.guo.controllers.learn.routes.Forms.formPost) {
+        @inputText(userForm("name"))
+        @inputText(userForm("age"))
+        <input type="submit" value="Submit!!">
+    }
 }
