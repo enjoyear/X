@@ -1,6 +1,6 @@
 package com.chen.guo.crawler.source.cfi;
 
-import com.chen.guo.common.Exception.ExceptionUtils;
+import com.chen.guo.common.exception.ExceptionUtils;
 import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.Scraper;
 import com.chen.guo.crawler.source.ScrapingTask;

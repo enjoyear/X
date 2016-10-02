@@ -1,4 +1,4 @@
-package com.chen.guo.common.Exception;
+package com.chen.guo.common.exception;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
