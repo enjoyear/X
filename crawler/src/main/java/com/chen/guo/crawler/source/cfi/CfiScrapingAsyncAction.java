@@ -69,7 +69,7 @@ class CfiScrapingAsyncAction extends RecursiveAction {
           Element nonbreakableFI = pageFoundamentalIndicators.getElementsByTag("nobr").first();
           if (!"财务分析指标".equals(nonbreakableFI.text()))
             throw new UnexpectedException("Didn't get the correct 财务分析指标 page for " + rootUrl);
-          task.scrape(WebAccessUtil.getHyperlink(nonbreakableFI));
+          task.scrape(page.getCode(), WebAccessUtil.getHyperlink(nonbreakableFI));
         } catch (IOException e) {
           failedPages.add(page);
           logger.error("Current URL: " + rootUrl + System.lineSeparator() + e.getMessage());

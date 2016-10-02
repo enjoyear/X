@@ -24,7 +24,7 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
   }
 
   @Override
-  public void scrape(String baseUrl) throws IOException {
+  public void scrape(String ticker, String baseUrl) throws IOException {
     logger.info("Scraping page: " + baseUrl);
     Element netProfitTr = getMainTable(baseUrl).getElementsContainingOwnText("归属母公司净利润").first();
     String npPage = netProfitTr.absUrl("href");
@@ -41,6 +41,8 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
       Elements children = row.children();
       LocalDate date = getDate(children.get(0).text());
       if (date.getYear() >= startYear) {
+        System.out.print(ticker);
+        System.out.print("\t");
         System.out.print(date.getYear() * 100 + date.getMonthValue());
         System.out.print("\t");
         System.out.print(children.get(1).text());

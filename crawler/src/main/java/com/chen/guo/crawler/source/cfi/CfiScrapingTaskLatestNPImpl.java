@@ -9,7 +9,7 @@ public class CfiScrapingTaskLatestNPImpl extends CfiScrapingTask {
   private static final Logger logger = Logger.getLogger(CfiScrapingTaskLatestNPImpl.class);
 
   @Override
-  public void scrape(String baseUrl) throws IOException {
+  public void scrape(String ticker, String baseUrl) throws IOException {
     logger.info("Scraping page: " + baseUrl);
     Element table = getMainTable(baseUrl);
     Element yearMonthTr = table.getElementsByTag("tr").get(1);
