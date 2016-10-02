@@ -8,7 +8,7 @@ public class CrawlerConfigUtil {
 
   public static int getStartingYear() {
     LocalDateTime now = LocalDateTime.now();
-    return now.getYear() - CrawlerConfig.getConfig().getInt("source.cfi.number_of_years_back");
+    return now.getYear() - CrawlerConfig.getConfig().getInt("number_of_years_back");
   }
 
 }
