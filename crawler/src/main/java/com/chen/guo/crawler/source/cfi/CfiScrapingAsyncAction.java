@@ -1,6 +1,7 @@
 package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.crawler.model.StockWebPage;
+import com.chen.guo.crawler.source.ScrapingTask;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
@@ -15,7 +16,7 @@ class CfiScrapingAsyncAction extends RecursiveAction {
   private static final Logger logger = Logger.getLogger(CfiScrapingAsyncAction.class);
   private ConcurrentLinkedQueue<StockWebPage> failedPages;
   private final WebAccessUtil webUtil;
-  private final CfiScrapingTask task;
+  private final ScrapingTask task;
   private final ArrayList<StockWebPage> pages;
   private final int low;
   private final int high;
@@ -25,7 +26,7 @@ class CfiScrapingAsyncAction extends RecursiveAction {
    * @param pages       Keep all tasks to do. pages must be random accessible.
    * @param failedPages As a return value
    */
-  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages,
+  public CfiScrapingAsyncAction(ScrapingTask task, ArrayList<StockWebPage> pages,
                                 ConcurrentLinkedQueue<StockWebPage> failedPages) {
     this(task, pages, 0, pages.size(), failedPages, WebAccessUtil.getInstance());
   }
@@ -34,7 +35,7 @@ class CfiScrapingAsyncAction extends RecursiveAction {
    * @param pages       Keep all tasks to do. pages must be random accessible.
    * @param failedPages As a return value
    */
-  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages,
+  public CfiScrapingAsyncAction(ScrapingTask task, ArrayList<StockWebPage> pages,
                                 ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
     this(task, pages, 0, pages.size(), failedPages, webUtil);
   }
@@ -45,7 +46,7 @@ class CfiScrapingAsyncAction extends RecursiveAction {
    * @param high        Exclusive high end
    * @param failedPages As a return value
    */
-  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages, int low, int high,
+  public CfiScrapingAsyncAction(ScrapingTask task, ArrayList<StockWebPage> pages, int low, int high,
                                 ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
     this.task = task;
     this.pages = pages;

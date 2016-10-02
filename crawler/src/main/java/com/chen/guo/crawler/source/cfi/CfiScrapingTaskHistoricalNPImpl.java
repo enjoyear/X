@@ -24,7 +24,7 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
   }
 
   @Override
-  void scrape(String baseUrl) throws IOException {
+  public void scrape(String baseUrl) throws IOException {
     logger.info("Scraping page: " + baseUrl);
     Element netProfitTr = getMainTable(baseUrl).getElementsContainingOwnText("归属母公司净利润").first();
     String npPage = netProfitTr.absUrl("href");

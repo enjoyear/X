@@ -15,7 +15,7 @@ public class CrawlerConfig {
   private CrawlerConfig() {
     ClassLoader classLoader = getClass().getClassLoader();
     File file = new File(classLoader.getResource("crawler.conf").getFile());
-    config = ConfigFactory.parseFile(file);
+    config = ConfigFactory.parseFile(file).resolve();
   }
 
   /**

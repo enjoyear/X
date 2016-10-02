@@ -2,7 +2,8 @@ package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.common.Exception.ExceptionUtils;
 import com.chen.guo.crawler.model.StockWebPage;
-import com.chen.guo.crawler.util.CrawlerConfigUtil;
+import com.chen.guo.crawler.source.Scraper;
+import com.chen.guo.crawler.source.ScrapingTask;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
@@ -16,17 +17,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
-public class CfiScraper {
+public class CfiScraper implements Scraper {
   private static final Logger logger = Logger.getLogger(CfiScraper.class);
   private static final Integer MAX_THREAD_COUNT = 8; //Should be configured to use the max count of cores of the machine
   private static final WebAccessUtil WEB_PAGE_UTIL = WebAccessUtil.getInstance();
 
-  public static void main(String[] args) {
-    CfiScrapingTask job = new CfiScrapingTaskHistoricalNPImpl(CrawlerConfigUtil.getStartingYear());
-    doScraping(job);
-  }
-
-  private static void doScraping(CfiScrapingTask scrapingTask) {
+  @Override
+  public void doScraping(ScrapingTask scrapingTask) {
     try {
       ArrayList<StockWebPage> allPages = getBasePages();
       logger.info("Total number of quote base urls: " + allPages.size());
