@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
-public class CfiSeeds {
-  private static final Logger logger = Logger.getLogger(CfiSeeds.class);
+public class CfiScraper {
+  private static final Logger logger = Logger.getLogger(CfiScraper.class);
   private static final Integer MAX_THREAD_COUNT = 8; //Should be configured to use the max count of cores of the machine
   private static final WebAccessUtil WEB_PAGE_UTIL = WebAccessUtil.getInstance();
 
@@ -34,7 +34,7 @@ public class CfiSeeds {
       ArrayList<StockWebPage> workToBeDone = allPages;
       while (!workToBeDone.isEmpty() && retryCount > 0) {
         ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
-        pool.invoke(new CfiScrapingAsyncAction(workToBeDone, failedPages, localWebUtil));
+        pool.invoke(new CfiScrapingAsyncAction(new CfiScrapingTaskLatestNPImpl(), workToBeDone, failedPages, localWebUtil));
         logger.info(String.format("%d out of %d pages failed", failedPages.size(), workToBeDone.size()));
 
         workToBeDone = new ArrayList<>();

@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RecursiveAction;
 
-class CfiScrapingTask extends RecursiveAction {
-  private static final Logger logger = Logger.getLogger(CfiScrapingTask.class);
+class CfiScrapingAsyncAction extends RecursiveAction {
+  private static final Logger logger = Logger.getLogger(CfiScrapingAsyncAction.class);
   private ConcurrentLinkedQueue<StockWebPage> failedPages;
   private final WebAccessUtil webUtil;
+  private final CfiScrapingTask task;
   private final ArrayList<StockWebPage> pages;
   private final int low;
   private final int high;
@@ -24,16 +25,18 @@ class CfiScrapingTask extends RecursiveAction {
    * @param pages       Keep all tasks to do. pages must be random accessible.
    * @param failedPages As a return value
    */
-  public CfiScrapingTask(ArrayList<StockWebPage> pages, ConcurrentLinkedQueue<StockWebPage> failedPages) {
-    this(pages, 0, pages.size(), failedPages, WebAccessUtil.getInstance());
+  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages,
+                                ConcurrentLinkedQueue<StockWebPage> failedPages) {
+    this(task, pages, 0, pages.size(), failedPages, WebAccessUtil.getInstance());
   }
 
   /**
    * @param pages       Keep all tasks to do. pages must be random accessible.
    * @param failedPages As a return value
    */
-  public CfiScrapingTask(ArrayList<StockWebPage> pages, ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
-    this(pages, 0, pages.size(), failedPages, webUtil);
+  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages,
+                                ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
+    this(task, pages, 0, pages.size(), failedPages, webUtil);
   }
 
   /**
@@ -42,8 +45,9 @@ class CfiScrapingTask extends RecursiveAction {
    * @param high        Exclusive high end
    * @param failedPages As a return value
    */
-  public CfiScrapingTask(ArrayList<StockWebPage> pages, int low, int high,
-                         ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
+  public CfiScrapingAsyncAction(CfiScrapingTask task, ArrayList<StockWebPage> pages, int low, int high,
+                                ConcurrentLinkedQueue<StockWebPage> failedPages, WebAccessUtil webUtil) {
+    this.task = task;
     this.pages = pages;
     this.low = low;
     this.high = high;
@@ -64,7 +68,7 @@ class CfiScrapingTask extends RecursiveAction {
           Element nonbreakableFI = pageFoundamentalIndicators.getElementsByTag("nobr").first();
           if (!"财务分析指标".equals(nonbreakableFI.text()))
             throw new UnexpectedException("Didn't get the correct 财务分析指标 page for " + rootUrl);
-          System.out.println(WebAccessUtil.getHyperlink(nonbreakableFI));
+          task.scrape(WebAccessUtil.getHyperlink(nonbreakableFI));
         } catch (IOException e) {
           failedPages.add(page);
           logger.error("Current URL: " + rootUrl + System.lineSeparator() + e.getMessage());
@@ -74,8 +78,8 @@ class CfiScrapingTask extends RecursiveAction {
       int mid = (low + high) >>> 1;
       //Divide and conquer
       invokeAll(
-          new CfiScrapingTask(pages, low, mid, failedPages, webUtil),
-          new CfiScrapingTask(pages, mid, high, failedPages, webUtil));
+          new CfiScrapingAsyncAction(task, pages, low, mid, failedPages, webUtil),
+          new CfiScrapingAsyncAction(task, pages, mid, high, failedPages, webUtil));
     }
   }
 }

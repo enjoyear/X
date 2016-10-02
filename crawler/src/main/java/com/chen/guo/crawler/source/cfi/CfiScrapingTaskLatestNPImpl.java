@@ -1,16 +1,16 @@
 package com.chen.guo.crawler.source.cfi;
 
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
 public class CfiScrapingTaskLatestNPImpl extends CfiScrapingTask {
-  public static void main(String[] args) throws IOException {
-    new CfiScrapingTaskLatestNPImpl().scrape("http://quote.cfi.cn/cwfxzb/11576/300182.html");
-  }
+  private static final Logger logger = Logger.getLogger(CfiScrapingTaskLatestNPImpl.class);
 
   @Override
   void scrape(String baseUrl) throws IOException {
+    logger.info("Scraping page: " + baseUrl);
     Element table = getMainTable(baseUrl);
     Element yearMonthTr = table.getElementsByTag("tr").get(1);
     if (yearMonthTr.getElementsContainingOwnText("截止日期").size() != 1)
@@ -20,4 +20,5 @@ public class CfiScrapingTaskLatestNPImpl extends CfiScrapingTask {
     //Get from main page.
     netProfitTr.parent().parent().children().forEach(c -> System.out.println(c.text()));
   }
+
 }

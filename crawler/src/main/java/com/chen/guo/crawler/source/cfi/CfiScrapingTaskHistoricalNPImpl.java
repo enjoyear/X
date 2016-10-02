@@ -1,6 +1,7 @@
 package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.crawler.util.WebAccessUtil;
+import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -8,12 +9,11 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
-  public static void main(String[] args) throws IOException {
-    new CfiScrapingTaskHistoricalNPImpl().scrape("http://quote.cfi.cn/cwfxzb/11576/300182.html");
-  }
+  private static final Logger logger = Logger.getLogger(CfiScrapingTaskHistoricalNPImpl.class);
 
   @Override
   void scrape(String baseUrl) throws IOException {
+    logger.info("Scraping page: " + baseUrl);
     Element netProfitTr = getMainTable(baseUrl).getElementsContainingOwnText("归属母公司净利润").first();
     //Get all historical
     Document netProfitPage = WebAccessUtil.getInstance().getPageContent(netProfitTr.absUrl("href"));
@@ -27,4 +27,5 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
       System.out.print("\n");
     });
   }
+
 }
