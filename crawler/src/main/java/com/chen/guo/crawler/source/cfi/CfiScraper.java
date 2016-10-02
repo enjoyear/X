@@ -2,6 +2,7 @@ package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.common.Exception.ExceptionUtils;
 import com.chen.guo.crawler.model.StockWebPage;
+import com.chen.guo.crawler.util.CrawlerConfigUtil;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
@@ -21,7 +22,11 @@ public class CfiScraper {
   private static final WebAccessUtil WEB_PAGE_UTIL = WebAccessUtil.getInstance();
 
   public static void main(String[] args) {
+    CfiScrapingTask job = new CfiScrapingTaskHistoricalNPImpl(CrawlerConfigUtil.getStartingYear());
+    doScraping(job);
+  }
 
+  private static void doScraping(CfiScrapingTask scrapingTask) {
     try {
       ArrayList<StockWebPage> allPages = getBasePages();
       logger.info("Total number of quote base urls: " + allPages.size());
@@ -34,7 +39,7 @@ public class CfiScraper {
       ArrayList<StockWebPage> workToBeDone = allPages;
       while (!workToBeDone.isEmpty() && retryCount > 0) {
         ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
-        pool.invoke(new CfiScrapingAsyncAction(new CfiScrapingTaskLatestNPImpl(), workToBeDone, failedPages, localWebUtil));
+        pool.invoke(new CfiScrapingAsyncAction(scrapingTask, workToBeDone, failedPages, localWebUtil));
         logger.info(String.format("%d out of %d pages failed", failedPages.size(), workToBeDone.size()));
 
         workToBeDone = new ArrayList<>();
