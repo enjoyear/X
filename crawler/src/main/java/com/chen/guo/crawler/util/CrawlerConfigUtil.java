@@ -2,8 +2,13 @@ package com.chen.guo.crawler.util;
 
 import com.chen.guo.crawler.CrawlerConfig;
 
+import java.time.LocalDateTime;
+
 public class CrawlerConfigUtil {
-  public static int getYear() {
-    return CrawlerConfig.getConfig().getInt("source.cfi.number_of_years");
+
+  public static int getStartingYear() {
+    LocalDateTime now = LocalDateTime.now();
+    return now.getYear() - CrawlerConfig.getConfig().getInt("source.cfi.number_of_years_back");
   }
+
 }

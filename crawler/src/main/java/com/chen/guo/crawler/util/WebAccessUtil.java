@@ -7,23 +7,26 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
-public class WebPageUtil {
+public class WebAccessUtil {
   private final int connectionTimeout;
-  private static WebPageUtil INSTANCE_DEFAULT = null;
+  private static WebAccessUtil INSTANCE_DEFAULT = null;
 
   static {
-    INSTANCE_DEFAULT = new WebPageUtil();
+    INSTANCE_DEFAULT = new WebAccessUtil();
   }
 
-  public static WebPageUtil getInstance() {
+  /**
+   * @return the WebAccessUtil instance with default connection timeout of 5 seconds.
+   */
+  public static WebAccessUtil getInstance() {
     return INSTANCE_DEFAULT;
   }
 
-  private WebPageUtil() {
+  private WebAccessUtil() {
     this(5);  //default timeout for internet connection is 5 second
   }
 
-  public WebPageUtil(Integer internetTimeoutSecond) {
+  public WebAccessUtil(Integer internetTimeoutSecond) {
     this.connectionTimeout = internetTimeoutSecond * 1000;
   }
 

@@ -2,7 +2,7 @@ package com.chen.guo.crawler.source.cfi;
 
 import com.chen.guo.common.Exception.ExceptionUtils;
 import com.chen.guo.crawler.model.StockWebPage;
-import com.chen.guo.crawler.util.WebPageUtil;
+import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CfiSeeds {
   private static final Logger logger = Logger.getLogger(CfiSeeds.class);
   private static final Integer MAX_THREAD_COUNT = 8; //Should be configured to use the max count of cores of the machine
-  private static final WebPageUtil WEB_PAGE_UTIL = WebPageUtil.getInstance();
+  private static final WebAccessUtil WEB_PAGE_UTIL = WebAccessUtil.getInstance();
 
   public static void main(String[] args) {
 
@@ -28,13 +28,13 @@ public class CfiSeeds {
       long startTime = System.currentTimeMillis();
 
       ForkJoinPool pool = new ForkJoinPool(MAX_THREAD_COUNT);
-      WebPageUtil localWebUtil = WEB_PAGE_UTIL;
-      WebPageUtil webUtil20 = new WebPageUtil(20);
+      WebAccessUtil localWebUtil = WEB_PAGE_UTIL;
+      WebAccessUtil webUtil20 = new WebAccessUtil(20);
       int retryCount = 3;
       ArrayList<StockWebPage> workToBeDone = allPages;
       while (!workToBeDone.isEmpty() && retryCount > 0) {
         ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
-        pool.invoke(new CfiScrapingTask(workToBeDone, failedPages, localWebUtil));
+        pool.invoke(new CfiScrapingAsyncAction(workToBeDone, failedPages, localWebUtil));
         logger.info(String.format("%d out of %d pages failed", failedPages.size(), workToBeDone.size()));
 
         workToBeDone = new ArrayList<>();
@@ -72,7 +72,7 @@ public class CfiSeeds {
         int index = nameCode.indexOf("(");
         StockWebPage sp = new StockWebPage(nameCode.substring(0, index).trim(),
             nameCode.substring(index + 1, nameCode.length() - 1).trim(),
-            WebPageUtil.getHyperlink(col));
+            WebAccessUtil.getHyperlink(col));
         String code = sp.getCode();
         if (code.startsWith("0") || code.startsWith("6") || code.startsWith("3")) {
           interestedPages.add(sp);
