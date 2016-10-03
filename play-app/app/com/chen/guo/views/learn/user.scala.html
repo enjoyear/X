@@ -5,9 +5,13 @@
 @(userForm: Form[UserData])(implicit messages: Messages)
 
 @main("user") {
+    <div class="page-header">
+        <h1>Form</h1>
+    </div>
     @form(com.chen.guo.controllers.learn.routes.Forms.formPost) {
         @inputText(userForm("name"))
         @inputText(userForm("age"))
         <input type="submit" value="Submit!!">
     }
+
 }
