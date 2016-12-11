@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class CfiScraper implements Scraper {
   @Override
   public void doScraping(ScrapingTask scrapingTask) {
     try {
-      ArrayList<StockWebPage> allPages = getBasePages();
+      List<StockWebPage> allPages = getProfilePages();
       logger.info("Total number of quote base urls: " + allPages.size());
       long startTime = System.currentTimeMillis();
 
@@ -33,7 +34,7 @@ public class CfiScraper implements Scraper {
       WebAccessUtil localWebUtil = WEB_PAGE_UTIL;
       WebAccessUtil webUtil20 = new WebAccessUtil(20);
       int retryCount = 3;
-      ArrayList<StockWebPage> workToBeDone = allPages;
+      List<StockWebPage> workToBeDone = allPages;
       while (!workToBeDone.isEmpty() && retryCount > 0) {
         ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
         pool.invoke(new CfiScrapingAsyncAction(scrapingTask, workToBeDone, failedPages, localWebUtil));
@@ -61,26 +62,27 @@ public class CfiScraper implements Scraper {
     }
   }
 
-  private static ArrayList<StockWebPage> getBasePages() throws IOException {
+  @Override
+  public List<StockWebPage> getProfilePages() throws IOException {
     Document listPage = WEB_PAGE_UTIL.getPageContent("http://quote.cfi.cn/stockList.aspx");
     Element content = listPage.getElementById("divcontent");
     Element table = content.getElementsByTag("table").first().getElementsByTag("tbody").first();
     Elements rows = table.getElementsByTag("tr");
 
-    ArrayList<StockWebPage> interestedPages = new ArrayList<>(4000);
+    List<StockWebPage> interestedPages = new ArrayList<>(4000);
     for (Element row : rows) {
       for (Element col : row.children()) {
         String nameCode = col.text();
         int index = nameCode.indexOf("(");
-        StockWebPage sp = new StockWebPage(nameCode.substring(0, index).trim(),
-            nameCode.substring(index + 1, nameCode.length() - 1).trim(),
-            WebAccessUtil.getHyperlink(col));
-        String code = sp.getCode();
+        String code = nameCode.substring(index + 1, nameCode.length() - 1).trim();
+        StockWebPage sp = new StockWebPage(nameCode.substring(0, index).trim(), code, WebAccessUtil.getHyperlink(col));
         if (code.startsWith("0") || code.startsWith("6") || code.startsWith("3")) {
           interestedPages.add(sp);
           if (code.length() != 6) {
             throw new UnexpectedException(String.format("Unexpected length of code starting with 0,3,6. The code is %s", sp));
           }
+        } else {
+          logger.debug("Non-included stock: " + sp);
         }
       }
     }

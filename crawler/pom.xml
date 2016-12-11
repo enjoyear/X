@@ -11,6 +11,7 @@
 
   <artifactId>X-crawler</artifactId>
   <name>X crawler</name>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <dependencies>
