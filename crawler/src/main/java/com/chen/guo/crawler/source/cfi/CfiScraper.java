@@ -13,6 +13,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ForkJoinPool;
@@ -64,12 +65,32 @@ public class CfiScraper implements Scraper {
 
   @Override
   public List<StockWebPage> getProfilePages() throws IOException {
-    Document listPage = WEB_PAGE_UTIL.getPageContent("http://quote.cfi.cn/stockList.aspx");
+    String shaZB = "http://quote.cfi.cn/stockList.aspx?t=11";
+    String shenZB = "http://quote.cfi.cn/stockList.aspx?t=12";
+    String shenZXB = "http://quote.cfi.cn/stockList.aspx?t=13";
+    String shenCYB = "http://quote.cfi.cn/stockList.aspx?t=14";
+    List<String> listUrls = Arrays.asList(shaZB, shenZB, shenZXB, shenCYB);
+
+    List<StockWebPage> all = new ArrayList<>(10000);
+
+    //TODO: Change to async calls.
+    listUrls.forEach(x -> {
+      try {
+        all.addAll(getProfilePages(x));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    });
+    return all;
+  }
+
+  private List<StockWebPage> getProfilePages(String listUrl) throws IOException {
+    Document listPage = WEB_PAGE_UTIL.getPageContent(listUrl);
     Element content = listPage.getElementById("divcontent");
     Element table = content.getElementsByTag("table").first().getElementsByTag("tbody").first();
     Elements rows = table.getElementsByTag("tr");
 
-    List<StockWebPage> interestedPages = new ArrayList<>(4000);
+    List<StockWebPage> interestedPages = new ArrayList<>(2000);
     for (Element row : rows) {
       for (Element col : row.children()) {
         String nameCode = col.text();
@@ -77,9 +98,11 @@ public class CfiScraper implements Scraper {
         String code = nameCode.substring(index + 1, nameCode.length() - 1).trim();
         StockWebPage sp = new StockWebPage(nameCode.substring(0, index).trim(), code, WebAccessUtil.getHyperlink(col));
         if (code.startsWith("0") || code.startsWith("6") || code.startsWith("3")) {
-          interestedPages.add(sp);
           if (code.length() != 6) {
-            throw new UnexpectedException(String.format("Unexpected length of code starting with 0,3,6. The code is %s", sp));
+            logger.warn(String.format("Unexpected code '%s' at list page %s", sp, listUrl));
+            continue;
+          } else {
+            interestedPages.add(sp);
           }
         } else {
           logger.debug("Non-included stock: " + sp);
