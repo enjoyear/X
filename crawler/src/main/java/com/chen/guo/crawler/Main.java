@@ -26,7 +26,7 @@ public class Main {
     }
     // ======== Refactoring END ========
 
-    scraper.doScraping(task);
+    scraper.doAllScraping(task);
 
   }
 }

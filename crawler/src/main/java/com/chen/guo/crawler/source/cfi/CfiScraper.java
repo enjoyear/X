@@ -1,6 +1,5 @@
 package com.chen.guo.crawler.source.cfi;
 
-import com.chen.guo.common.exception.ExceptionUtils;
 import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.Scraper;
 import com.chen.guo.crawler.source.ScrapingTask;
@@ -11,7 +10,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.rmi.UnexpectedException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,41 +24,35 @@ public class CfiScraper implements Scraper {
   private static final WebAccessUtil WEB_PAGE_UTIL = WebAccessUtil.getInstance();
 
   @Override
-  public void doScraping(ScrapingTask scrapingTask) {
-    try {
-      List<StockWebPage> allPages = getProfilePages();
-      logger.info("Total number of quote base urls: " + allPages.size());
-      long startTime = System.currentTimeMillis();
+  public void doScraping(List<StockWebPage> pages, ScrapingTask scrapingTask) throws ConnectException {
+    long startTime = System.currentTimeMillis();
 
-      ForkJoinPool pool = new ForkJoinPool(MAX_THREAD_COUNT);
-      WebAccessUtil localWebUtil = WEB_PAGE_UTIL;
-      WebAccessUtil webUtil20 = new WebAccessUtil(20);
-      int retryCount = 3;
-      List<StockWebPage> workToBeDone = allPages;
-      while (!workToBeDone.isEmpty() && retryCount > 0) {
-        ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
-        pool.invoke(new CfiScrapingAsyncAction(scrapingTask, workToBeDone, failedPages, localWebUtil));
-        logger.info(String.format("%d out of %d pages failed", failedPages.size(), workToBeDone.size()));
+    ForkJoinPool pool = new ForkJoinPool(MAX_THREAD_COUNT);
+    WebAccessUtil localWebUtil = WEB_PAGE_UTIL;
+    WebAccessUtil webUtil20 = new WebAccessUtil(20);
+    int retryCount = 3;
+    List<StockWebPage> workToBeDone = pages;
+    while (!workToBeDone.isEmpty() && retryCount > 0) {
+      ConcurrentLinkedQueue<StockWebPage> failedPages = new ConcurrentLinkedQueue<>();
+      pool.invoke(new CfiScrapingAsyncAction(scrapingTask, workToBeDone, failedPages, localWebUtil));
+      logger.info(String.format("%d out of %d pages failed", failedPages.size(), workToBeDone.size()));
 
-        workToBeDone = new ArrayList<>();
-        if (!failedPages.isEmpty()) {
-          --retryCount;
-          localWebUtil = webUtil20; //set longer connection time
-          workToBeDone.clear();
-          failedPages.forEach(workToBeDone::add); //Add failed pages to workToBeDone and try again.
-          logger.warn(String.format("Retries remaining %d times. Failed pages are as follows: ", retryCount));
-          logger.warn(String.join(",", workToBeDone.stream().map(StockWebPage::toString).collect(Collectors.toList())));
-        }
+      workToBeDone = new ArrayList<>();
+      if (!failedPages.isEmpty()) {
+        --retryCount;
+        localWebUtil = webUtil20; //set longer connection time
+        workToBeDone.clear();
+        failedPages.forEach(workToBeDone::add); //Add failed pages to workToBeDone and try again.
+        logger.warn(String.format("Retries remaining %d times. Failed pages are as follows: ", retryCount));
+        logger.warn(String.join(",", workToBeDone.stream().map(StockWebPage::toString).collect(Collectors.toList())));
       }
+    }
 
-      logger.info("Whole process took " + (System.currentTimeMillis() - startTime) / 1000 + " seconds to finish");
-      if (!workToBeDone.isEmpty() && retryCount == 0) {
-        throw new java.net.ConnectException(String.format(
-            "Failed to connect to %d pages:\n%s", workToBeDone.size(),
-            String.join(",", workToBeDone.stream().map(StockWebPage::toString).collect(Collectors.toList()))));
-      }
-    } catch (IOException e) {
-      ExceptionUtils.error(logger, e);
+    logger.info("Whole process took " + (System.currentTimeMillis() - startTime) / 1000 + " seconds to finish");
+    if (!workToBeDone.isEmpty() && retryCount == 0) {
+      throw new java.net.ConnectException(String.format(
+          "Failed to connect to %d pages:\n%s", workToBeDone.size(),
+          String.join(",", workToBeDone.stream().map(StockWebPage::toString).collect(Collectors.toList()))));
     }
   }
 

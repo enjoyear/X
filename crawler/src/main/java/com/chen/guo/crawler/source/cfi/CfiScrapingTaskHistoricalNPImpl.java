@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.rmi.UnexpectedException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.TreeMap;
 
 public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
   private static final Logger logger = Logger.getLogger(CfiScrapingTaskHistoricalNPImpl.class);
@@ -25,7 +26,8 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
 
   @Override
   public void scrape(String ticker, String baseUrl) throws IOException {
-    logger.info("Scraping page: " + baseUrl);
+    TreeMap<Integer, Double> data = new TreeMap<>();
+
     Element netProfitTr = getMainTable(baseUrl).getElementsContainingOwnText("归属母公司净利润").first();
     String npPage = netProfitTr.absUrl("href");
     Document netProfitPage = WebAccessUtil.getInstance().getPageContent(npPage);
@@ -41,15 +43,11 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
       Elements children = row.children();
       LocalDate date = getDate(children.get(0).text());
       if (date.getYear() >= startYear) {
-        System.out.print(ticker);
-        System.out.print("\t");
-        System.out.print(date.getYear() * 100 + date.getMonthValue());
-        System.out.print("\t");
-        System.out.print(children.get(1).text());
-        System.out.println();
+        data.put(date.getYear() * 100 + date.getMonthValue(), Double.valueOf(children.get(1).text()));
       } else
         break;
     }
+    results.put(ticker, data);
   }
 
   private static LocalDate getDate(String dateString) {

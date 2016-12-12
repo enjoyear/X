@@ -18,6 +18,7 @@ public class CfiScrapingTaskLatestNPImpl extends CfiScrapingTask {
     yearMonthTr.children().forEach(c -> System.out.println(c.text()));
     Element netProfitTr = table.getElementsContainingOwnText("归属母公司净利润").first();
     //Get from main page.
+    //TODO: add scraped results to "results" variable
     netProfitTr.parent().parent().children().forEach(c -> System.out.println(c.text()));
   }
 
