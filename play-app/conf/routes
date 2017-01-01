@@ -1,6 +1,7 @@
 # This file defines all application routes (Higher priority routes first)
 GET         /                                com.chen.guo.controllers.HomeController.indexGet()
-GET         /valuation                       com.chen.guo.controllers.valuation.ValuationController.formGet
+GET         /valuation                       com.chen.guo.controllers.valuation.ValuationController.formGet(codeOrName :String = "")
+GET         /valuation/:codeOrName           com.chen.guo.controllers.valuation.ValuationController.formGet(codeOrName: String)
 POST        /valuation                       com.chen.guo.controllers.valuation.ValuationController.formPost
 GET         /count                           controllers.CountController.count
 GET         /message                         controllers.AsyncController.message

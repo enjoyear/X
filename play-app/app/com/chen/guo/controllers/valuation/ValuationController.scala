@@ -18,8 +18,11 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
     )(AnalyzeRequest.apply)(AnalyzeRequest.unapply)
   )
 
-  def formGet = Action {
-    Ok(valuation(requestForm, AnalyzeRequest.emptyRequest))
+  def formGet(codeOrName: String) = Action {
+    if (codeOrName.trim.isEmpty)
+      Ok(valuation(requestForm, AnalyzeRequest.emptyRequest))
+    else
+      Ok(valuation(requestForm, AnalyzeRequest(codeOrName)))
   }
 
   def formPost = Action { implicit request =>
@@ -27,11 +30,8 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
       formWithErrors => {
         BadRequest(valuation(formWithErrors, AnalyzeRequest.emptyRequest))
       },
-      userData => {
-        /* binding success, you get the actual value. */
-        val newUser = AnalyzeRequest(userData.name)
-        println(newUser.name)
-        Redirect(routes.ValuationController.formGet())
+      requestFormData => {
+        Redirect(routes.ValuationController.formGet(requestFormData.name))
       }
     )
   }
