@@ -1,8 +1,10 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeRequest
 @import _root_.com.chen.guo.views.html.main
 @import helper._
+@import java.lang.Double
+@import java.util
 
-@(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest)(implicit messages: Messages)
+@(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, result: util.TreeMap[Integer, Double])(implicit messages: Messages)
 
 @main("valuation") {
     <div class="page-header">
@@ -23,6 +25,7 @@
     </div>
 
     <p>
-    @request.name
+        @request.name
+        result
     </p>
 }
