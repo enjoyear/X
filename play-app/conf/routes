@@ -1,6 +1,7 @@
 # This file defines all application routes (Higher priority routes first)
 GET         /                                com.chen.guo.controllers.HomeController.indexGet()
 GET         /valuation                       com.chen.guo.controllers.valuation.ValuationController.formGet
+POST        /valuation                       com.chen.guo.controllers.valuation.ValuationController.formPost
 GET         /count                           controllers.CountController.count
 GET         /message                         controllers.AsyncController.message
 GET         /learn/showcustomerorders        com.chen.guo.controllers.learn.Examples.showCustomerOrders(customer: String ?= "Chen")

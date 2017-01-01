@@ -1,13 +1,28 @@
-@import _root_.com.chen.guo.models.valuation.SingleRequest
+@import _root_.com.chen.guo.models.valuation.AnalyzeRequest
 @import _root_.com.chen.guo.views.html.main
 @import helper._
 
-@(userForm: Form[SingleRequest])
+@(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest)(implicit messages: Messages)
 
 @main("valuation") {
     <div class="page-header">
         <h1>Valuation</h1>
     </div>
 
+    <div class="form-group">
+    @form(com.chen.guo.controllers.valuation.routes.ValuationController.formPost) {
+        @inputText(requestForm("name"), 'placeholder -> {
+            if(request == AnalyzeRequest.emptyRequest)
+                "Code/Name"
+            else request.name
+        }
+            , '_label -> ""
+        )
+        <input type="submit" value="Analyze">
+        }
+    </div>
 
+    <p>
+    @request.name
+    </p>
 }
