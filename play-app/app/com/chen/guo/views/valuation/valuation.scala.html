@@ -25,7 +25,25 @@
     </div>
 
     <p>
-        @request.name
-        @result
+    @request.name
     </p>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>YearMonth</th><th>Net Income</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for(entry <- result.entrySet()) {
+                <tr>
+                    <td>@entry.getKey</td>
+                    <td>@entry.getValue</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
 }
