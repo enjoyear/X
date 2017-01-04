@@ -24,25 +24,39 @@ object HistoricalDataFetcher extends App {
     name2Code = allPages.map(x => (x.getName, x.getCode)).toMap
   }
 
-  def getSingle(name: String): Option[util.TreeMap[Integer, Double]] = {
+  def getSingle(codeOrName: String): Option[util.TreeMap[Integer, Double]] = {
     if (scraper == null) {
       init()
     }
 
-    val page: StockWebPage = nameMap.getOrElse(name, {
-      println("Refresh cache for updated names")
-      init()
-      nameMap.getOrElse(name, null)
-    })
+    codeToName(name2Code, codeOrName) match {
+      case None => throw new RuntimeException(codeOrName + " doesn't exist. Double check your code.")
+      case Some(name) => {
+        val page: StockWebPage = nameMap.getOrElse(name, {
+          println("Refresh cache for updated names")
+          init()
+          nameMap.getOrElse(name, null)
+        })
 
-    if (page == null) {
-      throw new RuntimeException(name + " doesn't exist. Double check your name/code.")
+        if (page == null) {
+          throw new RuntimeException(name + " doesn't exist. Double check your name.")
+        }
+
+        val task = new CfiScrapingTaskHistoricalNPImpl(2013)
+        scraper.doScraping(List(page).asJava, task)
+        val scraped = task.getTaskResults.asScala
+        scraped.get(name2Code(name))
+      }
     }
+  }
 
-    val task = new CfiScrapingTaskHistoricalNPImpl(2013)
-    scraper.doScraping(List(page).asJava, task)
-    val scraped = task.getTaskResults.asScala
-    scraped.get(name2Code(name))
-
+  def codeToName(map: Map[String, String], codeOrName: String): Option[String] = {
+    val firstChar = codeOrName.charAt(0)
+    if (firstChar >= '0' && firstChar <= '9') {
+      map.get(codeOrName)
+    }
+    else {
+      Some(codeOrName)
+    }
   }
 }

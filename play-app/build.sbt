@@ -9,6 +9,12 @@ scalaVersion := "2.11.7"
 //resolvers += "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
 resolvers += Resolver.mavenLocal
 
+lazy val scalaTestVersion = "2.2.5"
+lazy val testLib = Seq(
+  "org.scalatest" %% "scalatest" % scalaTestVersion % "test,it" withSources() withJavadoc()
+)
+
+//libraryDependencies ++= testLib
 
 libraryDependencies ++= Seq(
   jdbc,
