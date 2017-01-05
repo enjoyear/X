@@ -1,10 +1,10 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeRequest
+@import _root_.com.chen.guo.models.valuation.AnalyzeDataSet
 @import _root_.com.chen.guo.views.html.main
 @import helper._
-@import java.lang.Double
-@import java.util
+@import scala.collection.immutable.TreeMap
 
-@(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, result: util.TreeMap[Integer, Double])(implicit messages: Messages)
+@(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
 
 @main("valuation") {
     <div class="page-header">
@@ -28,22 +28,23 @@
     @request.name
     </p>
 
-    <div class="table-responsive">
+    <div class="table-responsive" style="float: left;">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>YearMonth</th><th>Net Income</th>
+                    <th>Year</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
                 </tr>
             </thead>
             <tbody>
-            @for(entry <- result.entrySet()) {
+            @for(yearMap <- dataSet.yearMonthMap) {
                 <tr>
-                    <td>@entry.getKey</td>
-                    <td>@entry.getValue</td>
+                    <td>@yearMap._1</td>
+                    @for(monthVal <- yearMap._2) {
+                        <td>@monthVal._2</td>
+                    }
                 </tr>
             }
             </tbody>
         </table>
     </div>
-
 }
