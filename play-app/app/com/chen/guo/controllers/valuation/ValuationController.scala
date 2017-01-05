@@ -25,7 +25,7 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
     if (codeOrName.trim.isEmpty)
       Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, new util.TreeMap[Integer, Double]()))
     else {
-      val data: util.TreeMap[Integer, Double] = HistoricalDataFetcher.getSingle(codeOrName).get
+      val data: util.TreeMap[Integer, Double] = HistoricalDataFetcher.getData(codeOrName)
       Ok(valuation(requestForm, AnalyzeRequest(codeOrName), data))
     }
   }

@@ -1,6 +1,8 @@
 package com.chen.guo.crawler.model;
 
-public class StockWebPage {
+import java.io.Serializable;
+
+public class StockWebPage implements Serializable {
   private final String name;
   private final String code;
   private final String url;
