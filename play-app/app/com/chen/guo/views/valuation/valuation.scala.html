@@ -1,13 +1,15 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeRequest
-@import _root_.com.chen.guo.models.valuation.AnalyzeDataSet
 @import _root_.com.chen.guo.views.html.main
+@import _root_.com.chen.guo.util.fetcher.AnalyzeDataSet
 @import helper._
+
 @import scala.collection.JavaConverters._
 
 @(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
 
 @displayTwoDigitsAfterPoint(number: Double) = @{
-    math.rint(number * 100) / 100
+    val formatter = new java.text.DecimalFormat("#,###.00")
+    formatter.format(number)
 }
 
 @main("valuation") {
@@ -31,6 +33,7 @@
     <h2>
     @request.name
     </h2>
+    <a href=@dataSet.getSourceUrl target="_blank">data source</a>
     <p>
         Net Income(Millions Yuan)
     </p>

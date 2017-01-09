@@ -1,16 +1,18 @@
-package com.chen.guo.models.valuation;
+package com.chen.guo.util.fetcher;
 
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class AnalyzeDataSet {
-
+  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "");
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
+  private final String _sourceUrl;
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthMap;
 
-  public AnalyzeDataSet(TreeMap<Integer, Double> netIncome) {
+  public AnalyzeDataSet(TreeMap<Integer, Double> netIncome, String sourceUrl) {
     _yearMonthAccMap = createYearMonthAccMap(netIncome);
+    _sourceUrl = sourceUrl;
     _yearMonthMap = doYearMonthDiff(_yearMonthAccMap);
   }
 
@@ -55,6 +57,10 @@ public class AnalyzeDataSet {
 
   public TreeMap<Integer, TreeMap<String, Double>> getYearMonthMap() {
     return _yearMonthMap;
+  }
+
+  public String getSourceUrl() {
+    return _sourceUrl;
   }
 }
 

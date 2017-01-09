@@ -1,8 +1,6 @@
 package com.chen.guo.util.fetcher
 
 import java.io._
-import java.lang.Double
-import java.util
 
 import com.chen.guo.crawler.model.StockWebPage
 import com.chen.guo.crawler.source.Scraper
@@ -33,14 +31,14 @@ object HistoricalDataFetcher {
     name2Code = allPages.map(x => (x.getName, x.getCode)).toMap
   }
 
-  def getData(codeOrName: String): util.TreeMap[Integer, Double] = {
+  def getData(codeOrName: String): AnalyzeDataSet = {
     if (codeMap.isEmpty) {
       init(true)
     }
     getData(codeOrName, false)
   }
 
-  private def getData(codeOrName: String, fileAlreadyUpdated: Boolean): util.TreeMap[Integer, Double] = {
+  private def getData(codeOrName: String, fileAlreadyUpdated: Boolean): AnalyzeDataSet = {
     val firstChar = codeOrName.charAt(0)
     val code = if (firstChar >= '0' && firstChar <= '9') {
       //Request by code
@@ -74,10 +72,10 @@ object HistoricalDataFetcher {
     val task = new CfiScrapingTaskHistoricalNPImpl(2013)
     scraper.doScraping(List(page).asJava, task)
     val scraped = task.getTaskResults.asScala
-    scraped(code)
+    new AnalyzeDataSet(scraped(code), page.getUrl)
   }
 
-  private def reInitAndGet(codeOrName: String): util.TreeMap[Integer, Double] = {
+  private def reInitAndGet(codeOrName: String): AnalyzeDataSet = {
     Logger.info("Cached stock pages seems to be outdated. Updating...")
     //TODO: No need to update for error input. Update at most once per day.
     init(false) //update serialization file

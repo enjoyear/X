@@ -1,11 +1,9 @@
 package com.chen.guo.controllers.valuation
 
-import java.lang.Double
-import java.util
 import javax.inject.{Inject, Singleton}
 
-import com.chen.guo.models.valuation.{AnalyzeDataSet, AnalyzeRequest}
-import com.chen.guo.util.fetcher.HistoricalDataFetcher
+import com.chen.guo.models.valuation.AnalyzeRequest
+import com.chen.guo.util.fetcher.{AnalyzeDataSet, HistoricalDataFetcher}
 import com.chen.guo.views.html.valuation.valuation
 import play.api.data.Form
 import play.api.data.Forms.{mapping, _}
@@ -23,17 +21,16 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
 
   def formGet(codeOrName: String) = Action {
     if (codeOrName.trim.isEmpty)
-      Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, new AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
+      Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, AnalyzeDataSet.EMPTY))
     else {
-      val data: util.TreeMap[Integer, Double] = HistoricalDataFetcher.getData(codeOrName)
-      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), new AnalyzeDataSet(data)))
+      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), HistoricalDataFetcher.getData(codeOrName)))
     }
   }
 
   def formPost = Action { implicit request =>
     requestForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(valuation(formWithErrors, AnalyzeRequest.emptyRequest, new AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
+        BadRequest(valuation(formWithErrors, AnalyzeRequest.emptyRequest, AnalyzeDataSet.EMPTY))
       },
       requestFormData => {
         Redirect(routes.ValuationController.formGet(requestFormData.name))
