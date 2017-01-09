@@ -2,9 +2,13 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeDataSet
 @import _root_.com.chen.guo.views.html.main
 @import helper._
-@import scala.collection.immutable.TreeMap
+@import scala.collection.JavaConverters._
 
 @(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
+
+@displayTwoDigitsAfterPoint(number: Double) = @{
+    math.rint(number * 100) / 100
+}
 
 @main("valuation") {
     <div class="page-header">
@@ -24,8 +28,11 @@
         }
     </div>
 
-    <p>
+    <h2>
     @request.name
+    </h2>
+    <p>
+        Net Income(Millions Yuan)
     </p>
 
     <div class="table-responsive" style="float: left;">
@@ -35,12 +42,13 @@
                     <th>Year</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
                 </tr>
             </thead>
+
             <tbody>
-            @for(yearMap <- dataSet.yearMonthMap) {
+            @for(yearMap <- dataSet.getYearMonthMap.asScala) {
                 <tr>
                     <td>@yearMap._1</td>
-                    @for(monthVal <- yearMap._2) {
-                        <td>@monthVal._2</td>
+                    @for(monthVal <- yearMap._2.asScala) {
+                        <td>@displayTwoDigitsAfterPoint(monthVal._2 / 100000)</td>
                     }
                 </tr>
             }

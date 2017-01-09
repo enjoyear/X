@@ -23,17 +23,17 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
 
   def formGet(codeOrName: String) = Action {
     if (codeOrName.trim.isEmpty)
-      Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
+      Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, new AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
     else {
       val data: util.TreeMap[Integer, Double] = HistoricalDataFetcher.getData(codeOrName)
-      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), AnalyzeDataSet(data)))
+      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), new AnalyzeDataSet(data)))
     }
   }
 
   def formPost = Action { implicit request =>
     requestForm.bindFromRequest.fold(
       formWithErrors => {
-        BadRequest(valuation(formWithErrors, AnalyzeRequest.emptyRequest, AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
+        BadRequest(valuation(formWithErrors, AnalyzeRequest.emptyRequest, new AnalyzeDataSet(new util.TreeMap[Integer, Double]())))
       },
       requestFormData => {
         Redirect(routes.ValuationController.formGet(requestFormData.name))
