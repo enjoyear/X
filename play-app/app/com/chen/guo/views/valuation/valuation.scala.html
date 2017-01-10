@@ -1,16 +1,12 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeRequest
-@import _root_.com.chen.guo.views.html.main
 @import _root_.com.chen.guo.util.fetcher.AnalyzeDataSet
+@import _root_.com.chen.guo.views.html.main
+@import _root_.com.chen.guo.views.ViewUtil
 @import helper._
 
 @import scala.collection.JavaConverters._
 
 @(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
-
-@displayTwoDigitsAfterPoint(number: Double) = @{
-    val formatter = new java.text.DecimalFormat("#,###.00")
-    formatter.format(number)
-}
 
 @main("valuation") {
     <div class="page-header">
@@ -33,12 +29,15 @@
     <h2>
     @request.name
     </h2>
-    <a href=@dataSet.getSourceUrl target="_blank">data source</a>
-    <p>
-        Net Income(Millions Yuan)
-    </p>
+    <div>
+        <a href=@dataSet.get_sourceUrl() target="_blank">data source</a>
+    </div>
 
-    <div class="table-responsive" style="float: left;">
+    <div class="table-responsive" style="float: left;
+        margin: 0px 5px;">
+        <p>
+            Net Income (Millions Yuan)
+        </p>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -47,15 +46,43 @@
             </thead>
 
             <tbody>
-            @for(yearMap <- dataSet.getYearMonthMap.asScala) {
+            @for(yearMap <- dataSet.get_netIncomeMap().asScala) {
                 <tr>
                     <td>@yearMap._1</td>
                     @for(monthVal <- yearMap._2.asScala) {
-                        <td>@displayTwoDigitsAfterPoint(monthVal._2 / 100000)</td>
+                        <td>@ViewUtil.displayAmountsInMillions(monthVal._2)</td>
                     }
                 </tr>
             }
             </tbody>
         </table>
+    </div>
+
+    <div class="table-responsive" style="float: left;
+        margin: 0px 5px;">
+        <p>
+            Net Income Growth
+        </p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Year</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @for(yearMap <- dataSet.get_netIncomeGrowthMap().asScala) {
+                <tr>
+                    <td>@yearMap._1</td>
+                    @for(monthVal <- yearMap._2.asScala) {
+                        <td>@ViewUtil.displayPercentages(monthVal._2)</td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+        <p>
+            Last 8-Quarter Average: @ViewUtil.calculateGeoAverage(dataSet.get_netIncomeGrowthMap())
+        </p>
     </div>
 }

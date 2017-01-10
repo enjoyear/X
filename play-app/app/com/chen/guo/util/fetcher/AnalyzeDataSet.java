@@ -8,15 +8,17 @@ public class AnalyzeDataSet {
   public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "");
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
   private final String _sourceUrl;
-  private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthMap;
+  private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeMap;
+  private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeGrowthMap;
 
   public AnalyzeDataSet(TreeMap<Integer, Double> netIncome, String sourceUrl) {
-    _yearMonthAccMap = createYearMonthAccMap(netIncome);
+    _yearMonthAccMap = convertToYearMonthAccMap(netIncome);
     _sourceUrl = sourceUrl;
-    _yearMonthMap = doYearMonthDiff(_yearMonthAccMap);
+    _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
+    _netIncomeGrowthMap = createGrowthMap(_netIncomeMap);
   }
 
-  private static TreeMap<Integer, TreeMap<String, Double>> createYearMonthAccMap(TreeMap<Integer, Double> yearMonthMap) {
+  private static TreeMap<Integer, TreeMap<String, Double>> convertToYearMonthAccMap(TreeMap<Integer, Double> yearMonthMap) {
     TreeMap<Integer, TreeMap<String, Double>> ret = new TreeMap<>();
 
     yearMonthMap.entrySet().forEach(kvp -> {
@@ -51,16 +53,44 @@ public class AnalyzeDataSet {
     return ret;
   }
 
-  public TreeMap<Integer, TreeMap<String, Double>> getYearMonthAccMap() {
+  private TreeMap<Integer, TreeMap<String, Double>> createGrowthMap(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
+    TreeMap<Integer, TreeMap<String, Double>> ret = new TreeMap<>();
+
+    Iterator<Map.Entry<Integer, TreeMap<String, Double>>> iterator = netIncomeMap.entrySet().iterator();
+
+    Map.Entry<Integer, TreeMap<String, Double>> prev = null;
+    if (iterator.hasNext()) {
+      prev = iterator.next();
+    }
+
+    while (iterator.hasNext()) {
+      Map.Entry<Integer, TreeMap<String, Double>> current = iterator.next();
+      TreeMap<String, Double> growthMap = new TreeMap<>();
+      ret.put(current.getKey(), growthMap);
+      for (Map.Entry<String, Double> monthNetIncome : current.getValue().entrySet()) {
+        String month = monthNetIncome.getKey();
+        growthMap.put(month, monthNetIncome.getValue() / prev.getValue().get(month));
+      }
+      prev = current;
+    }
+
+    return ret;
+  }
+
+  public TreeMap<Integer, TreeMap<String, Double>> get_yearMonthAccMap() {
     return _yearMonthAccMap;
   }
 
-  public TreeMap<Integer, TreeMap<String, Double>> getYearMonthMap() {
-    return _yearMonthMap;
+  public String get_sourceUrl() {
+    return _sourceUrl;
   }
 
-  public String getSourceUrl() {
-    return _sourceUrl;
+  public TreeMap<Integer, TreeMap<String, Double>> get_netIncomeMap() {
+    return _netIncomeMap;
+  }
+
+  public TreeMap<Integer, TreeMap<String, Double>> get_netIncomeGrowthMap() {
+    return _netIncomeGrowthMap;
   }
 }
 

@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+  "org.apache.commons" % "commons-math3" % "3.5",
   "com.chen.guo" % "X-crawler" % "1.0.1"
 )
 
