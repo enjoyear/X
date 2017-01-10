@@ -1,8 +1,8 @@
 package com.chen.guo.util.fetcher;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.*;
 
 public class AnalyzeDataSet {
   public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "");
@@ -15,7 +15,7 @@ public class AnalyzeDataSet {
     _yearMonthAccMap = convertToYearMonthAccMap(netIncome);
     _sourceUrl = sourceUrl;
     _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
-    _netIncomeGrowthMap = createGrowthMap(_netIncomeMap);
+    _netIncomeGrowthMap = createGrowthMap2(_netIncomeMap);
   }
 
   private static TreeMap<Integer, TreeMap<String, Double>> convertToYearMonthAccMap(TreeMap<Integer, Double> yearMonthMap) {
@@ -53,28 +53,65 @@ public class AnalyzeDataSet {
     return ret;
   }
 
-  private TreeMap<Integer, TreeMap<String, Double>> createGrowthMap(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
-    TreeMap<Integer, TreeMap<String, Double>> ret = new TreeMap<>();
+  /**
+   * Compare to last year
+   */
+  private TreeMap<Integer, TreeMap<String, Double>> createGrowthMap1(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
+    List<Triple<Integer, String, Double>> netIncomes = flattenTreeMap(netIncomeMap);
 
-    Iterator<Map.Entry<Integer, TreeMap<String, Double>>> iterator = netIncomeMap.entrySet().iterator();
-
-    Map.Entry<Integer, TreeMap<String, Double>> prev = null;
-    if (iterator.hasNext()) {
-      prev = iterator.next();
+    List<Triple<Integer, String, Double>> growthList = new ArrayList<>();
+    for (int i = 4; i < netIncomes.size(); ++i) {
+      Triple<Integer, String, Double> current = netIncomes.get(i);
+      growthList.add(Triple.of(current.getLeft(), current.getMiddle(), current.getRight() / netIncomes.get(i - 4).getRight()));
     }
 
-    while (iterator.hasNext()) {
-      Map.Entry<Integer, TreeMap<String, Double>> current = iterator.next();
-      TreeMap<String, Double> growthMap = new TreeMap<>();
-      ret.put(current.getKey(), growthMap);
-      for (Map.Entry<String, Double> monthNetIncome : current.getValue().entrySet()) {
-        String month = monthNetIncome.getKey();
-        growthMap.put(month, monthNetIncome.getValue() / prev.getValue().get(month));
+    return convertToTreeMap(growthList);
+  }
+
+  private List<Triple<Integer, String, Double>> flattenTreeMap(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
+    List<Triple<Integer, String, Double>> flattened = new ArrayList<>();
+    for (Map.Entry<Integer, TreeMap<String, Double>> yearMap : netIncomeMap.entrySet()) {
+      for (Map.Entry<String, Double> monthEntry : yearMap.getValue().entrySet()) {
+        flattened.add(Triple.of(yearMap.getKey(), monthEntry.getKey(), monthEntry.getValue()));
       }
-      prev = current;
+    }
+    return flattened;
+  }
+
+  private TreeMap<Integer, TreeMap<String, Double>> convertToTreeMap(List<Triple<Integer, String, Double>> flattend) {
+    TreeMap<Integer, TreeMap<String, Double>> ret = new TreeMap<>();
+    for (Triple<Integer, String, Double> growth : flattend) {
+      TreeMap<String, Double> monthMap = ret.computeIfAbsent(growth.getLeft(), k -> new TreeMap<>());
+      monthMap.put(growth.getMiddle(), growth.getRight());
+    }
+    return ret;
+  }
+
+  /**
+   * Compare trailing 4-quarters sum to last year
+   */
+  private TreeMap<Integer, TreeMap<String, Double>> createGrowthMap2(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
+    List<Triple<Integer, String, Double>> netIncomes = flattenTreeMap(netIncomeMap);
+
+    List<Triple<Integer, String, Double>> trailingSum = new ArrayList<>();
+    if (netIncomes.size() >= 8) {
+      Triple<Integer, String, Double> firstSum = netIncomes.get(3);
+      trailingSum.add(Triple.of(firstSum.getLeft(), firstSum.getMiddle(), firstSum.getRight() + netIncomes.get(2).getRight() + netIncomes.get(1).getRight() + netIncomes.get(0).getRight()));
+      for (int i = 4; i < netIncomes.size(); ++i) {
+        Triple<Integer, String, Double> next = netIncomes.get(i);
+        trailingSum.add(Triple.of(next.getLeft(), next.getMiddle(), next.getRight() + trailingSum.get(i - 4).getRight() - netIncomes.get(i - 4).getRight()));
+      }
+    } else {
+      return new TreeMap<>();
     }
 
-    return ret;
+    List<Triple<Integer, String, Double>> growthList = new ArrayList<>();
+    for (int i = 4; i < trailingSum.size(); ++i) {
+      Triple<Integer, String, Double> current = trailingSum.get(i);
+      growthList.add(Triple.of(current.getLeft(), current.getMiddle(), current.getRight() / trailingSum.get(i - 4).getRight()));
+    }
+
+    return convertToTreeMap(growthList);
   }
 
   public TreeMap<Integer, TreeMap<String, Double>> get_yearMonthAccMap() {

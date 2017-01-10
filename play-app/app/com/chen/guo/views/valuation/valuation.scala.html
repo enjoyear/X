@@ -8,6 +8,30 @@
 
 @(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
 
+
+@displayTable(dataSet: java.util.TreeMap[Integer, java.util.TreeMap[String, java.lang.Double]], displayMethod: (java.lang.Double) => String) = {
+@if(!dataSet.isEmpty) {
+    <tr>
+        <td>@dataSet.firstEntry().getKey</td>
+        @for(i <- 0 until (4 - dataSet.firstEntry().getValue.size())) {
+            <td></td>
+        }
+        @for(col <- dataSet.firstEntry().getValue.asScala) {
+            <td>@displayMethod(col._2)</td>
+        }
+    </tr>
+
+    @for(yearMap <- dataSet.tailMap(dataSet.firstEntry().getKey, false).asScala) {
+        <tr>
+            <td>@yearMap._1</td>
+            @for(monthVal <- yearMap._2.asScala) {
+                <td>@displayMethod(monthVal._2)</td>
+            }
+        </tr>
+    }
+}
+}
+
 @main("valuation") {
     <div class="page-header">
         <h1>Valuation</h1>
@@ -35,33 +59,28 @@
 
     <div class="table-responsive" style="float: left;
         margin: 0px 5px;">
-        <p>
+        <h4>
             Net Income (Millions Yuan)
-        </p>
+        </h4>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Year</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th>
                 </tr>
             </thead>
-
             <tbody>
-            @for(yearMap <- dataSet.get_netIncomeMap().asScala) {
-                <tr>
-                    <td>@yearMap._1</td>
-                    @for(monthVal <- yearMap._2.asScala) {
-                        <td>@ViewUtil.displayAmountsInMillions(monthVal._2)</td>
-                    }
-                </tr>
-            }
+            @displayTable(dataSet.get_netIncomeMap(), ViewUtil.displayAmountsInMillions)
             </tbody>
         </table>
     </div>
 
     <div class="table-responsive" style="float: left;
         margin: 0px 5px;">
-        <p>
+        <h4>
             Net Income Growth
+        </h4>
+        <p>
+            Calculated as a trailing 4-quarters growth percentage compared to last year.
         </p>
         <table class="table table-striped">
             <thead>
@@ -71,14 +90,7 @@
             </thead>
 
             <tbody>
-            @for(yearMap <- dataSet.get_netIncomeGrowthMap().asScala) {
-                <tr>
-                    <td>@yearMap._1</td>
-                    @for(monthVal <- yearMap._2.asScala) {
-                        <td>@ViewUtil.displayPercentages(monthVal._2)</td>
-                    }
-                </tr>
-            }
+            @displayTable(dataSet.get_netIncomeGrowthMap(), ViewUtil.displayPercentages)
             </tbody>
         </table>
         <p>
