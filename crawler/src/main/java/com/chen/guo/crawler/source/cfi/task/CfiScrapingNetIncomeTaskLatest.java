@@ -1,4 +1,4 @@
-package com.chen.guo.crawler.source.cfi;
+package com.chen.guo.crawler.source.cfi.task;
 
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
@@ -9,7 +9,8 @@ public class CfiScrapingNetIncomeTaskLatest extends CfiScrapingNetIncomeTask {
   private static final Logger logger = Logger.getLogger(CfiScrapingNetIncomeTaskLatest.class);
 
   @Override
-  public void scrape(String ticker, String baseUrl) throws IOException {
+  public void scrape(String ticker, String url财务分析指标) throws IOException {
+    String baseUrl = url财务分析指标;
     logger.info("Scraping page: " + baseUrl);
     Element table = getMainTable(baseUrl);
     Element yearMonthTr = table.getElementsByTag("tr").get(1);

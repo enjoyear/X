@@ -1,19 +1,15 @@
-package com.chen.guo.crawler.source.cfi;
+package com.chen.guo.crawler.source.cfi.task;
 
 import com.chen.guo.crawler.model.StockWebPage;
-import com.chen.guo.crawler.source.ScrapingTask;
+import com.chen.guo.crawler.source.FundamentalScrapingTask;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.rmi.UnexpectedException;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class CfiScrapingNetIncomeTask extends CfiScrapingTask {
-
+public abstract class CfiScrapingNetIncomeTask extends FundamentalScrapingTask {
   @Override
   public void scrape(StockWebPage page) throws IOException {
     //Try to get 财务分析指标 page
@@ -26,6 +22,11 @@ public abstract class CfiScrapingNetIncomeTask extends CfiScrapingTask {
     scrape(page.getCode(), WebAccessUtil.getHyperlink(nonbreakableFI));
   }
 
-  protected abstract void scrape(String ticker, String baseUrl) throws IOException;
+  protected abstract void scrape(String ticker, String url财务分析指标) throws IOException;
 
+  protected Element getMainTable(String baseUrl) throws IOException {
+    Document doc = WebAccessUtil.getInstance().getPageContent(baseUrl);
+    Element content = doc.getElementById("content");
+    return content.getElementsByTag("table").first().getElementsByTag("tbody").first();
+  }
 }

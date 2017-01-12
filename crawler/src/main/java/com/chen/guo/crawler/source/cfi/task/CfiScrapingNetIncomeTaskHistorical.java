@@ -1,4 +1,4 @@
-package com.chen.guo.crawler.source.cfi;
+package com.chen.guo.crawler.source.cfi.task;
 
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
@@ -25,7 +25,8 @@ public class CfiScrapingNetIncomeTaskHistorical extends CfiScrapingNetIncomeTask
   }
 
   @Override
-  public void scrape(String ticker, String baseUrl) throws IOException {
+  public void scrape(String ticker, String url财务分析指标) throws IOException {
+    String baseUrl = url财务分析指标;
     TreeMap<Integer, Double> data = new TreeMap<>();
 
     Element netProfitTr = getMainTable(baseUrl).getElementsContainingOwnText("归属母公司净利润").first();
