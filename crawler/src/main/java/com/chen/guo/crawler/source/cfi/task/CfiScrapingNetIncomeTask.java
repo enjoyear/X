@@ -1,7 +1,7 @@
 package com.chen.guo.crawler.source.cfi.task;
 
 import com.chen.guo.crawler.model.StockWebPage;
-import com.chen.guo.crawler.source.FundamentalScrapingTask;
+import com.chen.guo.crawler.source.ScrapingTask;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 
-public abstract class CfiScrapingNetIncomeTask extends FundamentalScrapingTask {
+public abstract class CfiScrapingNetIncomeTask extends ScrapingTask<Integer, Double> {
   @Override
   public void scrape(StockWebPage page) throws IOException {
     //Try to get 财务分析指标 page

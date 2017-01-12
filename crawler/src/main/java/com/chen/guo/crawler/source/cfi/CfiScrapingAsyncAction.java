@@ -4,11 +4,8 @@ import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.ScrapingTask;
 import com.chen.guo.crawler.util.WebAccessUtil;
 import org.apache.log4j.Logger;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.rmi.UnexpectedException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RecursiveAction;
