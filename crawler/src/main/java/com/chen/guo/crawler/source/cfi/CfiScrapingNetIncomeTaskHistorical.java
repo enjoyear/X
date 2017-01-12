@@ -12,15 +12,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.TreeMap;
 
-public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
-  private static final Logger logger = Logger.getLogger(CfiScrapingTaskHistoricalNPImpl.class);
+public class CfiScrapingNetIncomeTaskHistorical extends CfiScrapingNetIncomeTask {
+  private static final Logger logger = Logger.getLogger(CfiScrapingNetIncomeTaskHistorical.class);
   private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(("yyyy-MM-dd"));
   private final int startYear;
 
   /**
    * @param startYear denotes the oldest year we care about. This startYear is inclusive
    */
-  public CfiScrapingTaskHistoricalNPImpl(int startYear) {
+  public CfiScrapingNetIncomeTaskHistorical(int startYear) {
     this.startYear = startYear;
   }
 
@@ -53,5 +53,4 @@ public class CfiScrapingTaskHistoricalNPImpl extends CfiScrapingTask {
   private static LocalDate getDate(String dateString) {
     return LocalDate.parse(dateString, formatter);
   }
-
 }

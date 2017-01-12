@@ -62,18 +62,11 @@ class CfiScrapingAsyncAction extends RecursiveAction {
     if (high - low <= TASK_COUNT_PER_THREAD) {
       for (int i = low; i < high; ++i) {
         StockWebPage page = pages.get(i);
-        String rootUrl = page.getUrl();
         try {
-          //Try to get 财务分析指标 page
-          Element pageFoundamentalIndicators = webUtil.getPageContent(rootUrl)
-              .getElementById("nodea1");
-          Element nonbreakableFI = pageFoundamentalIndicators.getElementsByTag("nobr").first();
-          if (!"财务分析指标".equals(nonbreakableFI.text()))
-            throw new UnexpectedException("Didn't get the correct 财务分析指标 page for " + rootUrl);
-          task.scrape(page.getCode(), WebAccessUtil.getHyperlink(nonbreakableFI));
+          task.scrape(page);
         } catch (IOException e) {
           failedPages.add(page);
-          logger.error("Current URL: " + rootUrl + System.lineSeparator() + e.getMessage());
+          logger.error("Current URL: " + page.getUrl() + System.lineSeparator() + e.getMessage());
         }
       }
     } else {
