@@ -12,7 +12,7 @@ import play.api.mvc.{Action, Controller}
 
 @Singleton
 class ValuationController @Inject()(val messagesApi: MessagesApi) extends Controller with I18nSupport {
-
+  lazy val dataFetcher = new HistoricalDataFetcher()
   val requestForm = Form(
     mapping(
       "name" -> text
@@ -23,7 +23,7 @@ class ValuationController @Inject()(val messagesApi: MessagesApi) extends Contro
     if (codeOrName.trim.isEmpty)
       Ok(valuation(requestForm, AnalyzeRequest.emptyRequest, AnalyzeDataSet.EMPTY))
     else {
-      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), HistoricalDataFetcher.getData(codeOrName)))
+      Ok(valuation(requestForm, AnalyzeRequest(codeOrName), dataFetcher.getData(codeOrName)))
     }
   }
 
