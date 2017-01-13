@@ -1,7 +1,8 @@
 @import _root_.com.chen.guo.models.valuation.AnalyzeRequest
 @import _root_.com.chen.guo.util.fetcher.AnalyzeDataSet
-@import _root_.com.chen.guo.views.html.main
 @import _root_.com.chen.guo.views.ViewUtil
+@import _root_.com.chen.guo.views.html.main
+@import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask
 @import helper._
 
 @import scala.collection.JavaConverters._
@@ -51,7 +52,8 @@
     </div>
 
     <h2>
-    @request.name
+        @request.name @dataSet.get_quoteMap().get(CfiScrapingQuoteTask.LAST_QUOTE)
+        @dataSet.get_quoteMap().get(CfiScrapingQuoteTask.CHG_VALUE) @dataSet.get_quoteMap().get(CfiScrapingQuoteTask.CHG_PERCENTAGE)
     </h2>
     <div>
         <a href=@dataSet.get_sourceUrl() target="_blank">data source</a>

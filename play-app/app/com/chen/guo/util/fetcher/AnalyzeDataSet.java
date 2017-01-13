@@ -5,17 +5,19 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.*;
 
 public class AnalyzeDataSet {
-  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "");
+  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "", new TreeMap<>());
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
   private final String _sourceUrl;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeMap;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeGrowthMap;
+  private final TreeMap<String, String> _quoteMap;
 
-  public AnalyzeDataSet(TreeMap<Integer, Double> netIncome, String sourceUrl) {
-    _yearMonthAccMap = convertToYearMonthAccMap(netIncome);
+  public AnalyzeDataSet(TreeMap<Integer, Double> netIncomeMap, String sourceUrl, TreeMap<String, String> quoteMap) {
+    _yearMonthAccMap = convertToYearMonthAccMap(netIncomeMap);
     _sourceUrl = sourceUrl;
     _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
     _netIncomeGrowthMap = createGrowthMap2(_netIncomeMap);
+    _quoteMap = quoteMap;
   }
 
   private static TreeMap<Integer, TreeMap<String, Double>> convertToYearMonthAccMap(TreeMap<Integer, Double> yearMonthMap) {
@@ -114,10 +116,6 @@ public class AnalyzeDataSet {
     return convertToTreeMap(growthList);
   }
 
-  public TreeMap<Integer, TreeMap<String, Double>> get_yearMonthAccMap() {
-    return _yearMonthAccMap;
-  }
-
   public String get_sourceUrl() {
     return _sourceUrl;
   }
@@ -128,6 +126,10 @@ public class AnalyzeDataSet {
 
   public TreeMap<Integer, TreeMap<String, Double>> get_netIncomeGrowthMap() {
     return _netIncomeGrowthMap;
+  }
+
+  public TreeMap<String, String> get_quoteMap() {
+    return _quoteMap;
   }
 }
 

@@ -4,13 +4,12 @@ import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.Scraper;
 import com.chen.guo.crawler.source.cfi.CfiScraper;
 import com.chen.guo.crawler.source.cfi.task.CfiScrapingNetIncomeTaskHistorical;
+import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask;
 import play.Logger;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class HistoricalDataFetcher {
@@ -46,11 +45,11 @@ public class HistoricalDataFetcher {
     ));
   }
 
-  public AnalyzeDataSet getData(String codeOrName) throws IOException, ClassNotFoundException, InterruptedException {
+  public AnalyzeDataSet getData(String codeOrName) throws IOException, ClassNotFoundException, InterruptedException, ExecutionException {
     return getData(codeOrName, false);
   }
 
-  private AnalyzeDataSet getData(String codeOrName, boolean fileAlreadyUpdated) throws IOException, InterruptedException, ClassNotFoundException {
+  private AnalyzeDataSet getData(String codeOrName, boolean fileAlreadyUpdated) throws IOException, InterruptedException, ClassNotFoundException, ExecutionException {
     char firstChar = codeOrName.charAt(0);
     String code;
     if (firstChar >= '0' && firstChar <= '9') {
@@ -77,13 +76,29 @@ public class HistoricalDataFetcher {
       }
     }
 
-    CfiScrapingNetIncomeTaskHistorical task = new CfiScrapingNetIncomeTaskHistorical(2013);
-    scraper.doScraping(Arrays.asList(page), task);
-    Map<String, TreeMap<Integer, Double>> scraped = task.getTaskResults();
-    return new AnalyzeDataSet(scraped.get(code), page.getUrl());
+    List<StockWebPage> pageList = Collections.singletonList(page);
+
+    ExecutorService pool = Executors.newFixedThreadPool(2);
+
+    Future<Map<String, TreeMap<Integer, Double>>> task1 = pool.submit(() -> {
+      CfiScrapingNetIncomeTaskHistorical fundamentalTask = new CfiScrapingNetIncomeTaskHistorical(2013);
+      scraper.doScraping(pageList, fundamentalTask);
+      return fundamentalTask.getTaskResults();
+    });
+
+    Future<Map<String, TreeMap<String, String>>> task2 = pool.submit(() -> {
+      CfiScrapingQuoteTask quoteTask = new CfiScrapingQuoteTask();
+      scraper.doScraping(pageList, quoteTask);
+      return quoteTask.getTaskResults();
+    });
+
+    Map<String, TreeMap<Integer, Double>> fundamentalMap = task1.get();
+    Map<String, TreeMap<String, String>> quoteMap = task2.get();
+
+    return new AnalyzeDataSet(fundamentalMap.get(code), page.getUrl(), quoteMap.get(code));
   }
 
-  private AnalyzeDataSet reInitAndGet(String codeOrName) throws InterruptedException, IOException, ClassNotFoundException {
+  private AnalyzeDataSet reInitAndGet(String codeOrName) throws InterruptedException, IOException, ClassNotFoundException, ExecutionException {
     Logger.info("Cached stock pages seems to be outdated. Updating...");
     //TODO: No need to update for error input. Update at most once per day.
     init(false); //update serialization file
