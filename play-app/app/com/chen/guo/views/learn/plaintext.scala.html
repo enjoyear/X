@@ -1,6 +1,5 @@
 @import _root_.com.chen.guo.models.learn.Customer
 @import _root_.com.chen.guo.models.learn.Order
-@import _root_.com.chen.guo.views.html.learn._
 @import _root_.com.chen.guo.views.html.main
 
 @(customer: Customer, orders: List[Order])(sidebar: Html)(content: Html)
@@ -23,46 +22,4 @@
     </ul>
     <section class="sidebar">@sidebar</section>
     <section class="content">@content</section>
-
-    @notice("error") { color =>
-    Oops, something is <span style="color:@color">wrong</span>
-    }
-
-    @notice("warning") { color =>
-    Oops, something is <span style="color:@color">wrong</span>
-    }
-
-    @notice("success") { color =>
-        @{
-            val content: String = s"""Oops, something is <span style="color:${color}">wrong</span>"""
-            Html(content)
-        }
-    }
-
-    <div class="page-header">
-        <h1>My Table</h1>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>#</th><th>Header</th><th>Header</th><th>Header</th><th>Header</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1,001</td> <td>Lorem</td> <td>ipsum</td> <td>dolor</td> <td>sit</td>
-                </tr>
-                <tr>
-                    <td>1,002</td> <td>amet</td> <td>consectetur</td> <td>adipiscing</td> <td>elit</td>
-                </tr>
-                <tr>
-                    <td>1,003</td> <td>Integer</td> <td>nec</td> <td>odio</td> <td>Praesent</td>
-                </tr>
-                <tr>
-                    <td>1,003</td> <td>libero</td> <td>Sed</td> <td>cursus</td> <td>ante</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 }
