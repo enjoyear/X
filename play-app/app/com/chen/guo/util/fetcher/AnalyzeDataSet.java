@@ -1,12 +1,13 @@
 package com.chen.guo.util.fetcher;
 
+import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 
 public class AnalyzeDataSet {
-  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "", new TreeMap<>(), new TreeMap<>());
+  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet("", new TreeMap<>(), new TreeMap<>(), new TreeMap<>());
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
   private final String _sourceUrl;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeMap;
@@ -14,12 +15,15 @@ public class AnalyzeDataSet {
   private final TreeMap<String, String> _quoteMap;
   private final TreeMap<String, Pair<String, String>> _capMap;
 
-  public AnalyzeDataSet(TreeMap<Integer, Double> netIncomeMap, String sourceUrl, TreeMap<String, String> quoteMap, TreeMap<String, Pair<String, String>> capMap) {
+  public AnalyzeDataSet(String sourceUrl, TreeMap<Integer, Double> netIncomeMap, TreeMap<String, String> quoteMap, TreeMap<String, Pair<String, String>> capMap) {
     _yearMonthAccMap = convertToYearMonthAccMap(netIncomeMap);
     _sourceUrl = sourceUrl;
     _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
     _netIncomeGrowthMap = createGrowthMap2(_netIncomeMap);
     _quoteMap = quoteMap;
+    _quoteMap.computeIfAbsent(CfiScrapingQuoteTask.LAST_QUOTE, key -> _quoteMap.put(CfiScrapingQuoteTask.LAST_QUOTE, ""));
+    _quoteMap.computeIfAbsent(CfiScrapingQuoteTask.CHG_VALUE, key -> _quoteMap.put(CfiScrapingQuoteTask.CHG_VALUE, ""));
+    _quoteMap.computeIfAbsent(CfiScrapingQuoteTask.CHG_PERCENTAGE, key -> _quoteMap.put(CfiScrapingQuoteTask.CHG_PERCENTAGE, ""));
     _capMap = capMap;
   }
 
@@ -73,7 +77,7 @@ public class AnalyzeDataSet {
     return convertToTreeMap(growthList);
   }
 
-  private List<Triple<Integer, String, Double>> flattenTreeMap(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
+  public static List<Triple<Integer, String, Double>> flattenTreeMap(TreeMap<Integer, TreeMap<String, Double>> netIncomeMap) {
     List<Triple<Integer, String, Double>> flattened = new ArrayList<>();
     for (Map.Entry<Integer, TreeMap<String, Double>> yearMap : netIncomeMap.entrySet()) {
       for (Map.Entry<String, Double> monthEntry : yearMap.getValue().entrySet()) {
@@ -83,7 +87,7 @@ public class AnalyzeDataSet {
     return flattened;
   }
 
-  private TreeMap<Integer, TreeMap<String, Double>> convertToTreeMap(List<Triple<Integer, String, Double>> flattend) {
+  private static TreeMap<Integer, TreeMap<String, Double>> convertToTreeMap(List<Triple<Integer, String, Double>> flattend) {
     TreeMap<Integer, TreeMap<String, Double>> ret = new TreeMap<>();
     for (Triple<Integer, String, Double> growth : flattend) {
       TreeMap<String, Double> monthMap = ret.computeIfAbsent(growth.getLeft(), k -> new TreeMap<>());

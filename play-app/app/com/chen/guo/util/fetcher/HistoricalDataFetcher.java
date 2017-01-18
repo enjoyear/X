@@ -104,7 +104,7 @@ public class HistoricalDataFetcher {
     Map<String, TreeMap<String, String>> quoteMap = task2.get();
     Map<String, TreeMap<String, Pair<String, String>>> capMap = task3.get();
 
-    return new AnalyzeDataSet(fundamentalMap.get(code), page.getUrl(), quoteMap.get(code), capMap.get(code));
+    return new AnalyzeDataSet(page.getUrl(), fundamentalMap.get(code), quoteMap.get(code), capMap.get(code));
   }
 
   private AnalyzeDataSet reInitAndGet(String codeOrName) throws InterruptedException, IOException, ClassNotFoundException, ExecutionException {
