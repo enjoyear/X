@@ -1,23 +1,26 @@
 package com.chen.guo.util.fetcher;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 
 public class AnalyzeDataSet {
-  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "", new TreeMap<>());
+  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new TreeMap<>(), "", new TreeMap<>(), new TreeMap<>());
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
   private final String _sourceUrl;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeMap;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeGrowthMap;
   private final TreeMap<String, String> _quoteMap;
+  private final TreeMap<String, Pair<String, String>> _capMap;
 
-  public AnalyzeDataSet(TreeMap<Integer, Double> netIncomeMap, String sourceUrl, TreeMap<String, String> quoteMap) {
+  public AnalyzeDataSet(TreeMap<Integer, Double> netIncomeMap, String sourceUrl, TreeMap<String, String> quoteMap, TreeMap<String, Pair<String, String>> capMap) {
     _yearMonthAccMap = convertToYearMonthAccMap(netIncomeMap);
     _sourceUrl = sourceUrl;
     _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
     _netIncomeGrowthMap = createGrowthMap2(_netIncomeMap);
     _quoteMap = quoteMap;
+    _capMap = capMap;
   }
 
   private static TreeMap<Integer, TreeMap<String, Double>> convertToYearMonthAccMap(TreeMap<Integer, Double> yearMonthMap) {
@@ -130,6 +133,10 @@ public class AnalyzeDataSet {
 
   public TreeMap<String, String> get_quoteMap() {
     return _quoteMap;
+  }
+
+  public TreeMap<String, Pair<String, String>> get_capMap() {
+    return _capMap;
   }
 }
 

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CfiScrapingCapitalizationTaskHist extends ScrapingTask<Integer, Double> {
+public class CfiScrapingCapitalizationTaskHist extends ScrapingTask<String, Pair<String, String>> {
   private static final Logger logger = Logger.getLogger(CfiScrapingCapitalizationTaskHist.class);
   private static final String ROOT_URL = "http://quote.cfi.cn";
   private final int _startYear;
@@ -56,6 +56,8 @@ public class CfiScrapingCapitalizationTaskHist extends ScrapingTask<Integer, Dou
       Element newContent = newDoc.getElementById("content");
       updateCapMap(newContent, capitalMap);
     }
+
+    results.put(stockWebPage.getCode(), capitalMap);
   }
 
   private void updateCapMap(Element table, TreeMap<String, Pair<String, String>> capMap) {

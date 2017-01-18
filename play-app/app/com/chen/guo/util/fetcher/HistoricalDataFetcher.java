@@ -3,8 +3,10 @@ package com.chen.guo.util.fetcher;
 import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.Scraper;
 import com.chen.guo.crawler.source.cfi.CfiScraper;
-import com.chen.guo.crawler.source.cfi.task.CfiScrapingNetIncomeTaskHistorical;
+import com.chen.guo.crawler.source.cfi.task.CfiScrapingCapitalizationTaskHist;
+import com.chen.guo.crawler.source.cfi.task.CfiScrapingNetIncomeTaskHist;
 import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask;
+import org.apache.commons.lang3.tuple.Pair;
 import play.Logger;
 
 import java.io.*;
@@ -78,10 +80,10 @@ public class HistoricalDataFetcher {
 
     List<StockWebPage> pageList = Collections.singletonList(page);
 
-    ExecutorService pool = Executors.newFixedThreadPool(2);
+    ExecutorService pool = Executors.newFixedThreadPool(4);
 
     Future<Map<String, TreeMap<Integer, Double>>> task1 = pool.submit(() -> {
-      CfiScrapingNetIncomeTaskHistorical fundamentalTask = new CfiScrapingNetIncomeTaskHistorical(2013);
+      CfiScrapingNetIncomeTaskHist fundamentalTask = new CfiScrapingNetIncomeTaskHist(2013);
       scraper.doScraping(pageList, fundamentalTask);
       return fundamentalTask.getTaskResults();
     });
@@ -92,10 +94,17 @@ public class HistoricalDataFetcher {
       return quoteTask.getTaskResults();
     });
 
+    Future<Map<String, TreeMap<String, Pair<String, String>>>> task3 = pool.submit(() -> {
+      CfiScrapingCapitalizationTaskHist capTask = new CfiScrapingCapitalizationTaskHist(2013);
+      scraper.doScraping(pageList, capTask);
+      return capTask.getTaskResults();
+    });
+
     Map<String, TreeMap<Integer, Double>> fundamentalMap = task1.get();
     Map<String, TreeMap<String, String>> quoteMap = task2.get();
+    Map<String, TreeMap<String, Pair<String, String>>> capMap = task3.get();
 
-    return new AnalyzeDataSet(fundamentalMap.get(code), page.getUrl(), quoteMap.get(code));
+    return new AnalyzeDataSet(fundamentalMap.get(code), page.getUrl(), quoteMap.get(code), capMap.get(code));
   }
 
   private AnalyzeDataSet reInitAndGet(String codeOrName) throws InterruptedException, IOException, ClassNotFoundException, ExecutionException {

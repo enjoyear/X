@@ -9,9 +9,7 @@
 @import scala.collection.JavaConverters._
 
 @(requestForm: Form[AnalyzeRequest], request: AnalyzeRequest, dataSet: AnalyzeDataSet)(implicit messages: Messages)
-
-
-
+@* This is for displaying year-quarter based table with data in correct position *@
 @displayTable(dataSet: java.util.TreeMap[Integer, java.util.TreeMap[String, java.lang.Double]], displayMethod: (java.lang.Double) => String) = {
 @if(!dataSet.isEmpty) {
     <tr>
@@ -114,5 +112,25 @@
         <p>
             Last 8-Quarter Average: @ViewUtil.calculateGeoAverage(dataSet.get_netIncomeGrowthMap())
         </p>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th><th>Cap</th><th>Reason</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            @for(row <- dataSet.get_capMap().asScala) {
+                <tr>
+                    <td>@row._1</td>
+                    <td>@row._2.getLeft</td>
+                    <td>@row._2.getRight</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
 }
