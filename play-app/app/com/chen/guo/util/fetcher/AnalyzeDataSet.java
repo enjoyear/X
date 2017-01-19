@@ -1,5 +1,6 @@
 package com.chen.guo.util.fetcher;
 
+import com.chen.guo.crawler.model.StockWebPage;
 import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -7,17 +8,17 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.*;
 
 public class AnalyzeDataSet {
-  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet("", new TreeMap<>(), new TreeMap<>(), new TreeMap<>());
+  public final static AnalyzeDataSet EMPTY = new AnalyzeDataSet(new StockWebPage("", "", ""), new TreeMap<>(), new TreeMap<>(), new TreeMap<>());
   private final TreeMap<Integer, TreeMap<String, Double>> _yearMonthAccMap;
-  private final String _sourceUrl;
+  private final StockWebPage _pageRequest;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeMap;
   private final TreeMap<Integer, TreeMap<String, Double>> _netIncomeGrowthMap;
   private final TreeMap<String, String> _quoteMap;
   private final TreeMap<String, Pair<String, String>> _capMap;
 
-  public AnalyzeDataSet(String sourceUrl, TreeMap<Integer, Double> netIncomeMap, TreeMap<String, String> quoteMap, TreeMap<String, Pair<String, String>> capMap) {
+  public AnalyzeDataSet(StockWebPage pageRequest, TreeMap<Integer, Double> netIncomeMap, TreeMap<String, String> quoteMap, TreeMap<String, Pair<String, String>> capMap) {
     _yearMonthAccMap = convertToYearMonthAccMap(netIncomeMap);
-    _sourceUrl = sourceUrl;
+    _pageRequest = pageRequest;
     _netIncomeMap = doYearMonthDiff(_yearMonthAccMap);
     _netIncomeGrowthMap = createGrowthMap2(_netIncomeMap);
     _quoteMap = quoteMap;
@@ -123,8 +124,8 @@ public class AnalyzeDataSet {
     return convertToTreeMap(growthList);
   }
 
-  public String get_sourceUrl() {
-    return _sourceUrl;
+  public StockWebPage get_pageRequest() {
+    return _pageRequest;
   }
 
   public TreeMap<Integer, TreeMap<String, Double>> get_netIncomeMap() {

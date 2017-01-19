@@ -57,7 +57,7 @@
     </div>
 
     <h2>
-    @request.name
+    @dataSet.get_pageRequest().getName
     </h2>
     <h3>
     @defining(dataSet.get_quoteMap().get(CfiScrapingQuoteTask.LAST_QUOTE)
@@ -75,7 +75,7 @@
     }
     </h3>
     <div>
-        <a href=@dataSet.get_sourceUrl() target="_blank">data source</a>
+        <a href=@dataSet.get_pageRequest() target="_blank">data source</a>
     </div>
 
     <div>
