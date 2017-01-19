@@ -7,6 +7,7 @@ import com.chen.guo.crawler.source.cfi.task.CfiScrapingCapitalizationTaskHist;
 import com.chen.guo.crawler.source.cfi.task.CfiScrapingNetIncomeTaskHist;
 import com.chen.guo.crawler.source.cfi.task.CfiScrapingQuoteTask;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
 import play.Logger;
 
 import java.io.*;
@@ -81,9 +82,10 @@ public class HistoricalDataFetcher {
     List<StockWebPage> pageList = Collections.singletonList(page);
 
     ExecutorService pool = Executors.newFixedThreadPool(4);
+    final int startYear = getStartingYear();
 
     Future<Map<String, TreeMap<Integer, Double>>> task1 = pool.submit(() -> {
-      CfiScrapingNetIncomeTaskHist fundamentalTask = new CfiScrapingNetIncomeTaskHist(2013);
+      CfiScrapingNetIncomeTaskHist fundamentalTask = new CfiScrapingNetIncomeTaskHist(startYear);
       scraper.doScraping(pageList, fundamentalTask);
       return fundamentalTask.getTaskResults();
     });
@@ -95,7 +97,7 @@ public class HistoricalDataFetcher {
     });
 
     Future<Map<String, TreeMap<String, Pair<String, String>>>> task3 = pool.submit(() -> {
-      CfiScrapingCapitalizationTaskHist capTask = new CfiScrapingCapitalizationTaskHist(2013);
+      CfiScrapingCapitalizationTaskHist capTask = new CfiScrapingCapitalizationTaskHist(startYear);
       scraper.doScraping(pageList, capTask);
       return capTask.getTaskResults();
     });
@@ -143,5 +145,14 @@ public class HistoricalDataFetcher {
     oos.writeObject(updated);
     oos.close();
     return updated;
+  }
+
+  private static int getStartingYear() {
+    int year;
+    if (DateTime.now().monthOfYear().get() < 6)
+      year = DateTime.now().getYear() - 4;
+    else
+      year = DateTime.now().getYear() - 3;
+    return year;
   }
 }
