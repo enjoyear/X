@@ -62,7 +62,10 @@ public class ViewUtil {
 
   public static double[] calculateScore(AnalyzeDataSet dataSet, double growth) {
     TreeMap<String, String> quoteMap = dataSet.get_quoteMap();
-    String cap = dataSet.get_capMap().firstEntry().getValue().getLeft();
+    TreeMap<String, Pair<String, String>> capMap = dataSet.get_capMap();
+    if (capMap.isEmpty())
+      return new double[0];
+    String cap = capMap.firstEntry().getValue().getLeft();
 
     String quoteWithArrow = quoteMap.get(CfiScrapingQuoteTask.LAST_QUOTE);
     char lastChar = quoteWithArrow.charAt(quoteWithArrow.length() - 1);

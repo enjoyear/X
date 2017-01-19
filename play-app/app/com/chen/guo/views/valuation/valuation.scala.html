@@ -80,15 +80,17 @@
 
     <div>
     @defining(ViewUtil.calculateScore(dataSet, growthAvg)) { assess =>
-        <p>
-            EPS: @ViewUtil.displayDoubles(assess(0))
-        </p>
-        <p>
-            PE: @ViewUtil.displayDoubles(assess(1))
-        </p>
-        <p>
-            SCORE: @ViewUtil.displayDoubles(assess(2))
-        </p>
+        @if(assess.length == 3) {
+            <p>
+                EPS: @ViewUtil.displayDoubles(assess(0))
+            </p>
+            <p>
+                PE: @ViewUtil.displayDoubles(assess(1))
+            </p>
+            <p>
+                SCORE: @ViewUtil.displayDoubles(assess(2))
+            </p>
+        }
     }
     </div>
 
